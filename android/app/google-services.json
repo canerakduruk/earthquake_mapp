@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1058778206904",
+    "project_id": "depremapp-1579c",
+    "storage_bucket": "depremapp-1579c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1058778206904:android:43b7b6a349e03030651a4d",
+        "android_client_info": {
+          "package_name": "com.example.earthquake_mapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCfBitmerrfNXwSWv3c2T1QyhCiVnfXS9s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,25 @@
+{
+    "flutter": {
+        "platforms": {
+            "android": {
+                "default": {
+                    "projectId": "depremapp-1579c",
+                    "appId": "1:1058778206904:android:43b7b6a349e03030651a4d",
+                    "fileOutput": "android/app/google-services.json"
+                }
+            },
+            "dart": {
+                "lib/firebase_options.dart": {
+                    "projectId": "depremapp-1579c",
+                    "configurations": {
+                        "android": "1:1058778206904:android:43b7b6a349e03030651a4d",
+                        "ios": "1:1058778206904:ios:9a025263b9b4b810651a4d",
+                        "macos": "1:1058778206904:ios:9a025263b9b4b810651a4d",
+                        "web": "1:1058778206904:web:1d7b3c7e522a52cd651a4d",
+                        "windows": "1:1058778206904:web:61ffb5b848bc1dd2651a4d"
+                    }
+                }
+            }
+        }
+    }
+}
