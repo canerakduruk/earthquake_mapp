@@ -22,13 +22,13 @@ class _EarthquakeListScreenState extends ConsumerState<EarthquakeListScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(earthquakeViewModelProvider.notifier).loadEarthquakes();
+      ref.read(earthquakeListProvider.notifier).loadEarthquakes();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    final earthquakeState = ref.watch(earthquakeViewModelProvider);
+    final earthquakeState = ref.watch(earthquakeListProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -41,9 +41,7 @@ class _EarthquakeListScreenState extends ConsumerState<EarthquakeListScreen> {
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: () {
-              ref
-                  .read(earthquakeViewModelProvider.notifier)
-                  .refreshEarthquakes();
+              ref.read(earthquakeListProvider.notifier).refreshEarthquakes();
             },
           ),
         ],
@@ -80,9 +78,7 @@ class _EarthquakeListScreenState extends ConsumerState<EarthquakeListScreen> {
             const SizedBox(height: 16),
             ElevatedButton(
               onPressed: () {
-                ref
-                    .read(earthquakeViewModelProvider.notifier)
-                    .loadEarthquakes();
+                ref.read(earthquakeListProvider.notifier).loadEarthquakes();
               },
               child: const Text('Tekrar Dene'),
             ),
@@ -114,9 +110,7 @@ class _EarthquakeListScreenState extends ConsumerState<EarthquakeListScreen> {
 
     return RefreshIndicator(
       onRefresh: () async {
-        await ref
-            .read(earthquakeViewModelProvider.notifier)
-            .refreshEarthquakes();
+        await ref.read(earthquakeListProvider.notifier).refreshEarthquakes();
       },
       child: Column(
         children: [
@@ -169,7 +163,7 @@ class _EarthquakeListScreenState extends ConsumerState<EarthquakeListScreen> {
           ),
           GestureDetector(
             onTap: () {
-              ref.read(earthquakeViewModelProvider.notifier).clearFilter();
+              ref.read(earthquakeListProvider.notifier).clearFilter();
             },
             child: Icon(Icons.close, color: Colors.blue[700], size: 16),
           ),
@@ -204,7 +198,7 @@ class _EarthquakeListScreenState extends ConsumerState<EarthquakeListScreen> {
   }
 
   void _showFilterSheet() {
-    final currentFilter = ref.read(earthquakeViewModelProvider).currentFilter;
+    final currentFilter = ref.read(earthquakeListProvider).currentFilter;
 
     showModalBottomSheet(
       context: context,
@@ -221,7 +215,7 @@ class _EarthquakeListScreenState extends ConsumerState<EarthquakeListScreen> {
           scrollController: scrollController,
           initialParams: currentFilter,
           onApplyFilter: (params) {
-            ref.read(earthquakeViewModelProvider.notifier).applyFilter(params);
+            ref.read(earthquakeListProvider.notifier).applyFilter(params);
             Navigator.pop(context);
           },
         ),

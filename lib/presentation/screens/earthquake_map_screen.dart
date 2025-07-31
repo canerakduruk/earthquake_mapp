@@ -1,17 +1,29 @@
+import 'package:earthquake_mapp/presentation/providers/earthquake_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:intl/intl.dart';
 
-class EarthquakeMapScreen extends StatefulWidget {
+class EarthquakeMapScreen extends ConsumerStatefulWidget {
   const EarthquakeMapScreen({super.key});
 
   @override
-  State<EarthquakeMapScreen> createState() => _EarthquakeMapScreenState();
+  ConsumerState<EarthquakeMapScreen> createState() =>
+      _EarthquakeMapScreenState();
 }
 
-class _EarthquakeMapScreenState extends State<EarthquakeMapScreen> {
+class _EarthquakeMapScreenState extends ConsumerState<EarthquakeMapScreen> {
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(earthquakeMapProvider.notifier).loadEarthquakes();
+    });
+  }
+
   final MapController _mapController = MapController();
   final double _zoom = 5.5;
 
@@ -75,6 +87,8 @@ class _EarthquakeMapScreenState extends State<EarthquakeMapScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final earthquakeState = ref.watch(earthquakeMapProvider);
+
     return Scaffold(
       body: Stack(
         children: [
@@ -95,18 +109,35 @@ class _EarthquakeMapScreenState extends State<EarthquakeMapScreen> {
                 userAgentPackageName: 'com.example.earthquake_mapp',
               ),
               MarkerLayer(
-                markers: earthquakeLocations.map((location) {
-                  return Marker(
-                    point: location,
-                    width: 40,
-                    height: 40,
-                    child: const Icon(
-                      Icons.location_on,
-                      color: Colors.red,
-                      size: 32,
-                    ),
-                  );
-                }).toList(),
+                markers: earthquakeState.earthquakes
+                    .map((earthquake) {
+                      final latString = earthquake.latitude;
+                      final lonString = earthquake.longitude;
+
+                      if (latString == null || lonString == null) {
+                        return null; // Koordinat yoksa marker oluşturma
+                      }
+
+                      final lat = double.tryParse(latString);
+                      final lon = double.tryParse(lonString);
+
+                      if (lat == null || lon == null) {
+                        return null; // Parse edilemediyse marker oluşturma
+                      }
+
+                      return Marker(
+                        point: LatLng(lat, lon),
+                        width: 40,
+                        height: 40,
+                        child: const Icon(
+                          Icons.location_on,
+                          color: Colors.red,
+                          size: 32,
+                        ),
+                      );
+                    })
+                    .whereType<Marker>()
+                    .toList(), // null olanları filtrele
               ),
             ],
           ),

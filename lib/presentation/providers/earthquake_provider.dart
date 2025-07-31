@@ -27,8 +27,15 @@ final earthquakeRepositoryProvider = Provider<EarthquakeRepositoryInterface>((
 });
 
 // ViewModel provider
-final earthquakeViewModelProvider =
+
+final earthquakeListProvider =
     StateNotifierProvider<EarthquakeViewModel, EarthquakeState>((ref) {
-      final earthquakeRepository = ref.watch(earthquakeRepositoryProvider);
-      return EarthquakeViewModel(earthquakeRepository);
+      final repo = ref.watch(earthquakeRepositoryProvider);
+      return EarthquakeViewModel(repo);
+    });
+
+final earthquakeMapProvider =
+    StateNotifierProvider<EarthquakeViewModel, EarthquakeState>((ref) {
+      final repo = ref.watch(earthquakeRepositoryProvider);
+      return EarthquakeViewModel(repo);
     });
