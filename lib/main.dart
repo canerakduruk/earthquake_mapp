@@ -1,4 +1,4 @@
-import 'package:earthquake_mapp/presentation/screens/earthquake_list_screen.dart';
+import 'package:earthquake_mapp/presentation/screens/bottombar_nav_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -18,6 +18,6 @@ class MainApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return MaterialApp(home: const EarthquakeListScreen());
+    return MaterialApp(home: const BottombarNavScreen());
   }
 }

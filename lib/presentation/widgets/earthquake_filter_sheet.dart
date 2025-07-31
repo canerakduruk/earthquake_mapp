@@ -7,10 +7,13 @@ class EarthquakeFilterSheet extends StatefulWidget {
   final ScrollController scrollController;
   final Function(EarthquakeFilterParams) onApplyFilter;
 
+  final EarthquakeFilterParams? initialParams;
+
   const EarthquakeFilterSheet({
     super.key,
     required this.scrollController,
     required this.onApplyFilter,
+    this.initialParams,
   });
 
   @override
@@ -21,6 +24,16 @@ class _EarthquakeFilterSheetState extends State<EarthquakeFilterSheet> {
   DateTime selectedDate = DateHelper.getDefaultEndDate();
   double? minMagnitude;
   OrderBy orderBy = OrderBy.timeDesc;
+
+  @override
+  void initState() {
+    super.initState();
+
+    final p = widget.initialParams;
+    selectedDate = p?.startDate ?? DateHelper.getDefaultEndDate();
+    minMagnitude = p?.minMagnitude;
+    orderBy = p?.orderBy ?? OrderBy.timeDesc;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,13 +81,8 @@ class _EarthquakeFilterSheetState extends State<EarthquakeFilterSheet> {
 
           _buildSectionTitle('Sıralama'),
           const SizedBox(height: 12),
-          _buildDropdownField<OrderBy>(
-            'Sıralama',
-            orderBy,
-            OrderBy.values,
-            (value) => setState(() => orderBy = value ?? OrderBy.timeDesc),
-            (order) => _getOrderByDisplayName(order),
-          ),
+          _buildOrderBySelector(orderBy),
+
           const SizedBox(height: 32),
 
           Row(
@@ -194,41 +202,79 @@ class _EarthquakeFilterSheetState extends State<EarthquakeFilterSheet> {
     );
   }
 
-  Widget _buildDropdownField<T>(
-    String label,
-    T? value,
-    List<T> items,
-    Function(T?) onChanged,
-    String Function(T) getDisplayName,
-  ) {
+  Widget _buildOrderBySelector(OrderBy currentOrder) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
+        const Text(
+          'Sıralama',
+          style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
         ),
         const SizedBox(height: 8),
-        DropdownButtonFormField<T>(
-          value: value,
-          decoration: InputDecoration(
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 12,
-              vertical: 16,
+        GestureDetector(
+          onTap: () => _showOrderByModal(currentOrder),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey[300]!),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(_getOrderByDisplayName(currentOrder)),
+                const Icon(Icons.arrow_drop_down),
+              ],
             ),
           ),
-          items: items
-              .map(
-                (item) => DropdownMenuItem<T>(
-                  value: item,
-                  child: Text(getDisplayName(item)),
-                ),
-              )
-              .toList(),
-          onChanged: onChanged,
         ),
       ],
+    );
+  }
+
+  void _showOrderByModal(OrderBy selected) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 40,
+                height: 4,
+                margin: const EdgeInsets.only(bottom: 12),
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+              const Text(
+                'Sıralama Seçin',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 12),
+              ...OrderBy.values.map((order) {
+                return RadioListTile<OrderBy>(
+                  title: Text(_getOrderByDisplayName(order)),
+                  value: order,
+                  groupValue: selected,
+                  onChanged: (value) {
+                    setState(() {
+                      orderBy = value!;
+                    });
+                    Navigator.pop(context);
+                  },
+                );
+              }).toList(),
+            ],
+          ),
+        );
+      },
     );
   }
 

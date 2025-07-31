@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/earthquake_entity.dart';
 import '../../domain/repositories/earthquake_repository_interface.dart';
@@ -46,8 +47,24 @@ class EarthquakeViewModel extends StateNotifier<EarthquakeState> {
         earthquakes: earthquakes,
         currentFilter: params,
       );
-    } catch (e) {
-      state = state.copyWith(isLoading: false, error: e.toString());
+    } on DioException catch (e) {
+      if (e.type == DioExceptionType.connectionTimeout) {
+        state = state.copyWith(
+          isLoading: false,
+          error:
+              'Bağlantı zaman aşımı oldu. Lütfen internetinizi kontrol edin ve tekrar deneyin.',
+        );
+      } else {
+        state = state.copyWith(
+          isLoading: false,
+          error: 'Bir hata oluştu. Lütfen daha sonra tekrar deneyin.',
+        );
+      }
+    } catch (_) {
+      state = state.copyWith(
+        isLoading: false,
+        error: 'Beklenmeyen bir hata oluştu.',
+      );
     }
   }
 

@@ -26,6 +26,9 @@ dependencies:
   fade_shimmer: ^2.4.0
   equatable: ^2.0.7
   json_annotation: ^4.9.0
+  persistent_bottom_nav_bar_v2: ^6.1.0
+  font_awesome_flutter: ^10.8.0
+
 
 dev_dependencies:
   flutter_test:
