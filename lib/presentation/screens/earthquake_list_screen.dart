@@ -272,7 +272,7 @@ class _EarthquakeListScreenState extends ConsumerState<EarthquakeListScreen> {
                 _buildDetailTile(
                   Icons.access_time,
                   'Tarih',
-                  DateHelper.formatDateForDisplay(earthquake.dateTime),
+                  DateHelper.formatDateTimeForDisplay(earthquake.dateTime),
                 ),
                 _buildDetailTile(
                   Icons.location_on,

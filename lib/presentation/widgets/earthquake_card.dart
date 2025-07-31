@@ -50,7 +50,7 @@ class EarthquakeCard extends StatelessWidget {
                   Icon(Icons.access_time, size: 16, color: Colors.grey[600]),
                   const SizedBox(width: 4),
                   Text(
-                    DateHelper.formatDateForDisplay(earthquake.dateTime),
+                    DateHelper.formatDateTimeForDisplay(earthquake.dateTime),
                     style: TextStyle(color: Colors.grey[600], fontSize: 14),
                   ),
                 ],
@@ -82,23 +82,8 @@ class EarthquakeCard extends StatelessWidget {
   }
 
   Widget _buildMagnitudeChip() {
-    Color backgroundColor;
+    Color backgroundColor = earthquake.magnitudeColor;
     Color textColor = Colors.white;
-
-    switch (earthquake.magnitudeColor) {
-      case 'critical':
-        backgroundColor = Colors.red[800]!;
-        break;
-      case 'high':
-        backgroundColor = Colors.orange[700]!;
-        break;
-      case 'medium':
-        backgroundColor = Colors.yellow[700]!;
-        textColor = Colors.black;
-        break;
-      default:
-        backgroundColor = Colors.green[600]!;
-    }
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),

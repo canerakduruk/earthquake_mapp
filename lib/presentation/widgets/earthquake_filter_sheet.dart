@@ -293,7 +293,7 @@ class _EarthquakeFilterSheetState extends State<EarthquakeFilterSheet> {
 
   void _resetFilters() {
     setState(() {
-      selectedDate = DateHelper.getDefaultEndDate();
+      selectedDate = DateHelper.getDefaultStartDate();
       minMagnitude = null;
       orderBy = OrderBy.timeDesc;
     });

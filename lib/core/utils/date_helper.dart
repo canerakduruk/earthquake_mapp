@@ -2,10 +2,15 @@ import 'package:intl/intl.dart';
 
 class DateHelper {
   static const String apiDateFormat = 'yyyy-MM-ddTHH:mm:ss';
-  static const String displayDateFormat = 'dd.MM.yyyy HH:mm';
+  static const String displayDateTimeFormat = 'dd.MM.yyyy HH:mm';
+  static const String displayDateFormat = 'dd.MM.yyyy';
 
   static String formatDateForApi(DateTime date) {
     return DateFormat(apiDateFormat).format(date);
+  }
+
+  static String formatDateTimeForDisplay(DateTime date) {
+    return DateFormat(displayDateTimeFormat).format(date);
   }
 
   static String formatDateForDisplay(DateTime date) {
@@ -22,10 +27,14 @@ class DateHelper {
   }
 
   static DateTime getDefaultStartDate() {
-    return DateTime.now().subtract(const Duration(days: 7));
+    DateTime now = DateTime.now();
+    DateTime todayStart = DateTime(now.year, now.month, now.day);
+
+    return todayStart;
   }
 
   static DateTime getDefaultEndDate() {
-    return DateTime.now();
+    final now = DateTime.now();
+    return DateTime(now.year, now.month, now.day, 23, 59, 59, 999);
   }
 }

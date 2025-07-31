@@ -1,3 +1,6 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+
 class EarthquakeEntity {
   final String? eventId;
   final String? magnitude;
@@ -29,13 +32,13 @@ class EarthquakeEntity {
 
   String get coordinatesDisplay => '$latitude, $longitude';
 
-  String get magnitudeColor {
-    final double? mag = double.tryParse(magnitude ?? "");
-    if (mag == null) return 'unknown';
+  Color get magnitudeColor {
+    final double? mag = double.tryParse(magnitude ?? '');
+    if (mag == null) return Colors.grey;
 
-    if (mag >= 7.0) return 'critical';
-    if (mag >= 5.0) return 'high';
-    if (mag >= 3.0) return 'medium';
-    return 'low';
+    if (mag >= 7.0) return Colors.red.shade800;
+    if (mag >= 5.0) return Colors.orange.shade700;
+    if (mag >= 3.0) return Colors.yellow.shade700;
+    return Colors.green.shade600;
   }
 }

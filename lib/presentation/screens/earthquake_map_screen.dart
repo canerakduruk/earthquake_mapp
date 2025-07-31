@@ -1,3 +1,5 @@
+import 'package:earthquake_mapp/core/enums/earthquake_enums.dart';
+import 'package:earthquake_mapp/data/services/earthquake_service.dart';
 import 'package:earthquake_mapp/presentation/providers/earthquake_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -5,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_map_marker_cluster_plus/flutter_map_marker_cluster_plus.dart';
 
 class EarthquakeMapScreen extends ConsumerStatefulWidget {
   const EarthquakeMapScreen({super.key});
@@ -15,6 +18,15 @@ class EarthquakeMapScreen extends ConsumerStatefulWidget {
 }
 
 class _EarthquakeMapScreenState extends ConsumerState<EarthquakeMapScreen> {
+  final MapController _mapController = MapController();
+  final double _zoom = 5.5;
+  LatLng? _initialPosition;
+
+  DateTime _selectedDate = DateTime.now();
+  bool _isDatePickerOpen = false;
+
+  int? _minMagnitudeFilter; // Burada seçilen minimum büyüklük tutulacak
+
   @override
   void initState() {
     super.initState();
@@ -23,20 +35,6 @@ class _EarthquakeMapScreenState extends ConsumerState<EarthquakeMapScreen> {
       ref.read(earthquakeMapProvider.notifier).loadEarthquakes();
     });
   }
-
-  final MapController _mapController = MapController();
-  final double _zoom = 5.5;
-
-  LatLng? _initialPosition;
-
-  final List<LatLng> earthquakeLocations = [
-    LatLng(39.9208, 32.8541), // Ankara
-    LatLng(41.0082, 28.9784), // İstanbul
-    LatLng(37.0000, 35.3213), // Adana
-  ];
-
-  DateTime _selectedDate = DateTime.now();
-  bool _isDatePickerOpen = false;
 
   void _zoomIn() {
     final currentZoom = _mapController.camera.zoom;
@@ -78,6 +76,39 @@ class _EarthquakeMapScreenState extends ConsumerState<EarthquakeMapScreen> {
       setState(() {
         _selectedDate = picked;
       });
+
+      final startDate = DateTime(
+        _selectedDate.year,
+        _selectedDate.month,
+        _selectedDate.day,
+        0,
+        0,
+        0,
+      );
+
+      final endDate = DateTime(
+        _selectedDate.year,
+        _selectedDate.month,
+        _selectedDate.day,
+        23,
+        59,
+        59,
+      );
+
+      final params = EarthquakeFilterParams(
+        startDate: startDate,
+        endDate: endDate,
+        minMagnitude: null,
+        maxMagnitude: null,
+        magnitudeType: null,
+        minDepth: null,
+        maxDepth: null,
+        limit: null,
+        orderBy: OrderBy.timeDesc,
+      );
+      _minMagnitudeFilter = null;
+      ref.read(earthquakeMapProvider.notifier).applyFilter(params);
+      // Burada liste API'den tekrar çekiliyor, bu tarih değişiminde olur
     }
 
     setState(() {
@@ -89,65 +120,137 @@ class _EarthquakeMapScreenState extends ConsumerState<EarthquakeMapScreen> {
   Widget build(BuildContext context) {
     final earthquakeState = ref.watch(earthquakeMapProvider);
 
+    // Butonlar ve diğer UI her zaman gösterilecek,
+    // ama harita kısmı ya da markerlar veri gelene kadar boş ya da loading gösterilecek.
+
     return Scaffold(
       body: Stack(
         children: [
-          FlutterMap(
-            mapController: _mapController,
-            options: MapOptions(
-              initialCenter: LatLng(39.9208, 32.8541),
-              initialZoom: _zoom,
-              minZoom: 3,
-              maxZoom: 18,
-              onMapReady: () {
-                _initialPosition = const LatLng(39.9208, 32.8541);
-              },
-            ),
-            children: [
-              TileLayer(
-                urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                userAgentPackageName: 'com.example.earthquake_mapp',
-              ),
-              MarkerLayer(
-                markers: earthquakeState.earthquakes
-                    .map((earthquake) {
-                      final latString = earthquake.latitude;
-                      final lonString = earthquake.longitude;
-
-                      if (latString == null || lonString == null) {
-                        return null; // Koordinat yoksa marker oluşturma
-                      }
-
-                      final lat = double.tryParse(latString);
-                      final lon = double.tryParse(lonString);
-
-                      if (lat == null || lon == null) {
-                        return null; // Parse edilemediyse marker oluşturma
-                      }
-
-                      return Marker(
-                        point: LatLng(lat, lon),
-                        width: 40,
-                        height: 40,
-                        child: const Icon(
-                          Icons.location_on,
-                          color: Colors.red,
-                          size: 32,
+          // Harita ve markerlar: loading ise spinner, değilse harita
+          Positioned.fill(
+            child: earthquakeState.isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : FlutterMap(
+                    mapController: _mapController,
+                    options: MapOptions(
+                      initialCenter: LatLng(39.9208, 32.8541),
+                      initialZoom: _zoom,
+                      minZoom: 3,
+                      maxZoom: 18,
+                      onMapReady: () {
+                        _initialPosition = const LatLng(39.9208, 32.8541);
+                      },
+                    ),
+                    children: [
+                      TileLayer(
+                        urlTemplate:
+                            'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                        userAgentPackageName: 'com.example.earthquake_mapp',
+                      ),
+                      MarkerClusterLayerWidget(
+                        options: MarkerClusterLayerOptions(
+                          maxClusterRadius: 45,
+                          size: const Size(40, 40),
+                          markers:
+                              (_minMagnitudeFilter == null
+                                      ? earthquakeState.earthquakes
+                                      : earthquakeState.earthquakes.where((eq) {
+                                          if (eq.magnitude == null) {
+                                            return false;
+                                          }
+                                          final mag = double.tryParse(
+                                            eq.magnitude!,
+                                          );
+                                          if (mag == null) return false;
+                                          return mag >= _minMagnitudeFilter!;
+                                        }).toList())
+                                  .map((earthquake) {
+                                    final latString = earthquake.latitude;
+                                    final lonString = earthquake.longitude;
+                                    if (latString == null ||
+                                        lonString == null) {
+                                      return null;
+                                    }
+                                    final lat = double.tryParse(latString);
+                                    final lon = double.tryParse(lonString);
+                                    if (lat == null || lon == null) return null;
+                                    return Marker(
+                                      point: LatLng(lat, lon),
+                                      width: 50,
+                                      height: 50,
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: earthquake.magnitudeColor,
+                                          borderRadius: BorderRadius.circular(
+                                            10,
+                                          ), // Yumuşak köşe
+                                          border: Border.all(
+                                            color: Colors.white,
+                                            width: 2,
+                                          ), // İstersen beyaz çerçeve
+                                          boxShadow: [
+                                            BoxShadow(
+                                              color: Colors.black26,
+                                              blurRadius: 4,
+                                              offset: Offset(0, 2),
+                                            ),
+                                          ],
+                                        ),
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                          earthquake.magnitude ?? '',
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  })
+                                  .whereType<Marker>()
+                                  .toList(),
+                          builder: (context, markers) {
+                            return Container(
+                              decoration: BoxDecoration(
+                                color: Colors.blue.withAlpha(150),
+                                shape: BoxShape.circle,
+                              ),
+                              alignment: Alignment.center,
+                              child: Text(
+                                markers.length.toString(),
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            );
+                          },
                         ),
-                      );
-                    })
-                    .whereType<Marker>()
-                    .toList(), // null olanları filtrele
-              ),
-            ],
+                      ),
+                    ],
+                  ),
           ),
+
+          // Hata varsa haritanın üstünde gösterelim
+          if (earthquakeState.error != null)
+            Center(
+              child: Container(
+                padding: const EdgeInsets.all(12),
+                color: Colors.red.withAlpha(120),
+                child: Text(
+                  'Hata oluştu: ${earthquakeState.error}',
+                  style: const TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
 
           // Tarih seçici SafeArea içinde üstte
           SafeArea(
             child: Align(
               alignment: Alignment.topCenter,
               child: GestureDetector(
-                onTap: _selectDate,
+                onTap: () => _selectDate(),
                 child: Container(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 12,
@@ -157,7 +260,7 @@ class _EarthquakeMapScreenState extends ConsumerState<EarthquakeMapScreen> {
                     color: Colors.white.withAlpha(200),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(color: Colors.grey.shade300),
-                    boxShadow: [
+                    boxShadow: const [
                       BoxShadow(
                         color: Colors.black12,
                         blurRadius: 4,
@@ -203,6 +306,7 @@ class _EarthquakeMapScreenState extends ConsumerState<EarthquakeMapScreen> {
             ),
           ),
 
+          // Sağ üst yenile butonu
           SafeArea(
             child: Align(
               alignment: Alignment.topRight,
@@ -218,7 +322,7 @@ class _EarthquakeMapScreenState extends ConsumerState<EarthquakeMapScreen> {
             ),
           ),
 
-          // Butonlar da SafeArea içinde altta sağda
+          // Alt sağ zoom ve konum butonları
           SafeArea(
             child: Align(
               alignment: Alignment.bottomRight,
@@ -251,25 +355,38 @@ class _EarthquakeMapScreenState extends ConsumerState<EarthquakeMapScreen> {
             ),
           ),
 
+          // Alt sol büyüklük filtre butonu
           SafeArea(
             child: Align(
               alignment: Alignment.bottomLeft,
               child: Padding(
                 padding: const EdgeInsets.only(bottom: 20, left: 10),
                 child: PopupMenuButton<int>(
-                  icon: FaIcon(FontAwesomeIcons.anchor),
                   tooltip: 'Büyüklük Seçenekleri',
                   onSelected: (value) {
-                    // Burada seçilen büyüklüğe göre filtreleme veya işlem yapabilirsiniz
-                    // Örneğin: print('Seçilen büyüklük: $value');
-                    // İsterseniz setState ile seçim bilgisini kaydedip UI güncelleyebilirsiniz
-                    print('Seçilen büyüklük: $value üstü');
+                    setState(() {
+                      _minMagnitudeFilter = value;
+                    });
                   },
-                  itemBuilder: (context) => [
-                    const PopupMenuItem(value: 3, child: Text('3 üstü')),
-                    const PopupMenuItem(value: 5, child: Text('5 üstü')),
-                    const PopupMenuItem(value: 8, child: Text('8 üstü')),
+                  itemBuilder: (context) => const [
+                    PopupMenuItem(value: 8, child: Text('8 üstü')),
+                    PopupMenuItem(value: 5, child: Text('5 üstü')),
+                    PopupMenuItem(value: 3, child: Text('3 üstü')),
+                    PopupMenuItem(value: 0, child: Text('Hepsi')),
                   ],
+                  icon: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(
+                        0.8,
+                      ), // Buraya istediğin arka plan rengini ver
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: const EdgeInsets.all(8),
+                    child: const FaIcon(
+                      FontAwesomeIcons.plusMinus,
+                      color: Colors.black87,
+                    ),
+                  ),
                 ),
               ),
             ),

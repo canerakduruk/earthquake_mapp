@@ -28,6 +28,7 @@ dependencies:
   json_annotation: ^4.9.0
   persistent_bottom_nav_bar_v2: ^6.1.0
   font_awesome_flutter: ^10.8.0
+  flutter_map_marker_cluster_plus: ^1.4.2
 
 
 dev_dependencies:
