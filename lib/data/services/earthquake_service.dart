@@ -6,8 +6,8 @@ import '../../core/utils/date_helper.dart';
 import '../models/earthquake_model.dart';
 
 class EarthquakeFilterParams {
-  final DateTime? startDate;
-  final DateTime? endDate;
+  final DateTime startDate;
+  final DateTime endDate;
   final double? minLat;
   final double? maxLat;
   final double? minLon;
@@ -27,8 +27,8 @@ class EarthquakeFilterParams {
   final int? eventId;
 
   EarthquakeFilterParams({
-    this.startDate,
-    this.endDate,
+    required this.startDate,
+    required this.endDate,
     this.minLat,
     this.maxLat,
     this.minLon,

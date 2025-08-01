@@ -1,3 +1,4 @@
+import 'package:earthquake_mapp/core/enums/earthquake_enums.dart';
 import 'package:earthquake_mapp/presentation/viewmodels/earthquake_viewmodel.dart';
 import 'package:earthquake_mapp/presentation/widgets/earthquake_card_shimmer.dart';
 import 'package:earthquake_mapp/presentation/widgets/earthquake_filter_sheet.dart';
@@ -8,6 +9,7 @@ import '../widgets/earthquake_card.dart';
 import '../widgets/loading_widget.dart';
 import '../../data/services/earthquake_service.dart';
 import '../../core/utils/date_helper.dart';
+import 'package:logger/logger.dart';
 
 class EarthquakeListScreen extends ConsumerStatefulWidget {
   const EarthquakeListScreen({super.key});
@@ -51,6 +53,62 @@ class _EarthquakeListScreenState extends ConsumerState<EarthquakeListScreen> {
   }
 
   Widget _buildBody(EarthquakeState state) {
+    bool logAndCheckNull(Logger logger, String name, Object? value) {
+      logger.i("$name: ${value ?? 'null'}");
+      return value == null;
+    }
+
+    bool isSameDateTime(DateTime a, DateTime b) {
+      return a.year == b.year &&
+          a.month == b.month &&
+          a.day == b.day &&
+          a.hour == b.hour &&
+          a.minute == b.minute;
+    }
+
+    bool isDefaultFilter(EarthquakeFilterParams filter) {
+      final Logger logger = Logger();
+      final defaultStart = DateHelper.getDefaultStartDate();
+      final defaultEnd = DateHelper.getDefaultEndDate();
+
+      logger.i("startDate: ${filter.startDate} | default: $defaultStart");
+      logger.i("endDate: ${filter.endDate} | default: $defaultEnd");
+
+      final noOtherFilters =
+          logAndCheckNull(logger, 'minLat', filter.minLat) &&
+          logAndCheckNull(logger, 'maxLat', filter.maxLat) &&
+          logAndCheckNull(logger, 'minLon', filter.minLon) &&
+          logAndCheckNull(logger, 'maxLon', filter.maxLon) &&
+          logAndCheckNull(logger, 'centerLat', filter.centerLat) &&
+          logAndCheckNull(logger, 'centerLon', filter.centerLon) &&
+          logAndCheckNull(logger, 'maxRadius', filter.maxRadius) &&
+          logAndCheckNull(logger, 'minRadius', filter.minRadius) &&
+          logAndCheckNull(logger, 'magnitudeType', filter.magnitudeType) &&
+          logAndCheckNull(logger, 'minDepth', filter.minDepth) &&
+          logAndCheckNull(logger, 'maxDepth', filter.maxDepth) &&
+          logAndCheckNull(logger, 'limit', filter.limit) &&
+          logAndCheckNull(logger, 'offset', filter.offset) &&
+          logAndCheckNull(logger, 'eventId', filter.eventId);
+
+      final result =
+          isSameDateTime(filter.startDate, defaultStart) &&
+          isSameDateTime(filter.endDate, defaultEnd) &&
+          (filter.minMagnitude == 0.0 || filter.minMagnitude == null) &&
+          filter.orderBy == OrderBy.timeDesc &&
+          noOtherFilters;
+
+      logger.i(isSameDateTime(filter.startDate, defaultStart));
+
+      logger.i(isSameDateTime(filter.endDate, defaultEnd));
+      logger.i(filter.minMagnitude == 0.0 || filter.minMagnitude == null);
+      logger.i(filter.orderBy == OrderBy.timeDesc);
+      logger.i(noOtherFilters);
+
+      return result;
+    }
+
+    // Yardımcı fonksiyonlar
+
     if (state.isLoading && state.earthquakes.isEmpty) {
       return const LoadingWidget(message: 'Deprem verileri yükleniyor...');
     }
@@ -114,6 +172,9 @@ class _EarthquakeListScreenState extends ConsumerState<EarthquakeListScreen> {
       },
       child: Column(
         children: [
+          if (state.currentFilter != null &&
+              !isDefaultFilter(state.currentFilter!))
+            _buildFilterInfo(state.currentFilter!),
           if (state.isLoading)
             Expanded(
               child: ListView.builder(

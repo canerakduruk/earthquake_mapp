@@ -21,7 +21,7 @@ class EarthquakeFilterSheet extends StatefulWidget {
 }
 
 class _EarthquakeFilterSheetState extends State<EarthquakeFilterSheet> {
-  DateTime selectedDate = DateHelper.getDefaultEndDate();
+  DateTime selectedDate = DateHelper.getDefaultStartDate();
   double? minMagnitude;
   OrderBy orderBy = OrderBy.timeDesc;
 
@@ -30,7 +30,7 @@ class _EarthquakeFilterSheetState extends State<EarthquakeFilterSheet> {
     super.initState();
 
     final p = widget.initialParams;
-    selectedDate = p?.startDate ?? DateHelper.getDefaultEndDate();
+    selectedDate = p?.startDate ?? DateHelper.getDefaultStartDate();
     minMagnitude = p?.minMagnitude;
     orderBy = p?.orderBy ?? OrderBy.timeDesc;
   }

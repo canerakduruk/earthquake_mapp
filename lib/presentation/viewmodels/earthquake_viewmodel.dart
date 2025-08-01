@@ -1,5 +1,8 @@
 import 'package:dio/dio.dart';
+import 'package:earthquake_mapp/core/enums/earthquake_enums.dart';
+import 'package:earthquake_mapp/core/utils/date_helper.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:logger/logger.dart';
 import '../../domain/entities/earthquake_entity.dart';
 import '../../domain/repositories/earthquake_repository_interface.dart';
 import '../../data/services/earthquake_service.dart';
@@ -34,12 +37,13 @@ class EarthquakeState {
 
 class EarthquakeViewModel extends StateNotifier<EarthquakeState> {
   final EarthquakeRepositoryInterface _earthquakeRepository;
+  Logger logger = Logger();
 
   EarthquakeViewModel(this._earthquakeRepository) : super(EarthquakeState());
 
   Future<void> loadEarthquakes([EarthquakeFilterParams? params]) async {
     state = state.copyWith(isLoading: true, error: null);
-
+    logger.d("Parametre burda: $params"); // Dart string interpolation
     try {
       final earthquakes = await _earthquakeRepository.getEarthquakes(params);
       state = state.copyWith(
@@ -77,6 +81,13 @@ class EarthquakeViewModel extends StateNotifier<EarthquakeState> {
   }
 
   void clearFilter() {
-    loadEarthquakes();
+    final defaultFilter = EarthquakeFilterParams(
+      startDate: DateHelper.getDefaultStartDate(),
+      endDate: DateHelper.getDefaultEndDate(),
+      minMagnitude: 0.0,
+      orderBy: OrderBy.timeDesc,
+      // diğer default değerler
+    );
+    loadEarthquakes(defaultFilter);
   }
 }
