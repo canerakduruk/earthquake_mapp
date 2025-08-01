@@ -69,7 +69,7 @@ class _EarthquakeMapScreenState extends ConsumerState<EarthquakeMapScreen> {
     final picked = await showDatePicker(
       context: context,
       initialDate: _selectedDate,
-      firstDate: DateTime(2000),
+      firstDate: DateTime(1999),
       lastDate: DateTime.now(),
     );
 
