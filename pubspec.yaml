@@ -29,6 +29,7 @@ dependencies:
   persistent_bottom_nav_bar_v2: ^6.1.0
   font_awesome_flutter: ^10.8.0
   flutter_map_marker_cluster_plus: ^1.4.2
+  logger: ^2.6.1
 
 
 dev_dependencies:

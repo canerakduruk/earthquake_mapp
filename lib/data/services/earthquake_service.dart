@@ -138,12 +138,15 @@ class EarthquakeService {
       if (params.minRadius != null) queryParams['minrad'] = params.minRadius;
 
       // Büyüklük sınırlamaları
-      if (params.minMagnitude != null)
+      if (params.minMagnitude != null) {
         queryParams['minmag'] = params.minMagnitude;
-      if (params.maxMagnitude != null)
+      }
+      if (params.maxMagnitude != null) {
         queryParams['maxmag'] = params.maxMagnitude;
-      if (params.magnitudeType != null)
+      }
+      if (params.magnitudeType != null) {
         queryParams['magtype'] = params.magnitudeType!.value;
+      }
 
       // Derinlik sınırlamaları
       if (params.minDepth != null) queryParams['mindepth'] = params.minDepth;
@@ -152,8 +155,9 @@ class EarthquakeService {
       // Diğer parametreler
       if (params.limit != null) queryParams['limit'] = params.limit;
       if (params.offset != null) queryParams['offset'] = params.offset;
-      if (params.orderBy != null)
+      if (params.orderBy != null) {
         queryParams['orderby'] = params.orderBy!.value;
+      }
       if (params.eventId != null) queryParams['eventid'] = params.eventId;
     } else {
       // Varsayılan parametreler

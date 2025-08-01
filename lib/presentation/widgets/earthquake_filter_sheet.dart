@@ -41,6 +41,8 @@ class _EarthquakeFilterSheetState extends State<EarthquakeFilterSheet> {
       padding: const EdgeInsets.all(20),
       child: ListView(
         controller: widget.scrollController,
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
         children: [
           Center(
             child: Container(
@@ -270,7 +272,7 @@ class _EarthquakeFilterSheetState extends State<EarthquakeFilterSheet> {
                     Navigator.pop(context);
                   },
                 );
-              }).toList(),
+              }),
             ],
           ),
         );

@@ -206,20 +206,16 @@ class _EarthquakeListScreenState extends ConsumerState<EarthquakeListScreen> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (context) => DraggableScrollableSheet(
-        initialChildSize: 0.7,
-        maxChildSize: 0.9,
-        minChildSize: 0.5,
-        expand: false,
-        builder: (context, scrollController) => EarthquakeFilterSheet(
-          scrollController: scrollController,
+      builder: (context) {
+        return EarthquakeFilterSheet(
+          scrollController: ScrollController(), // veya null geçebilirsin
           initialParams: currentFilter,
           onApplyFilter: (params) {
             ref.read(earthquakeListProvider.notifier).applyFilter(params);
             Navigator.pop(context);
           },
-        ),
-      ),
+        );
+      },
     );
   }
 
