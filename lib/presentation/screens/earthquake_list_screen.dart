@@ -234,28 +234,37 @@ class _EarthquakeListScreenState extends ConsumerState<EarthquakeListScreen> {
   }
 
   String _getFilterDescription(EarthquakeFilterParams filter) {
-    if ((filter.minMagnitude == null || filter.minMagnitude == 0) &&
-        (filter.maxMagnitude == null || filter.maxMagnitude == 0) &&
-        (filter.minDepth == null || filter.minDepth == 0) &&
-        (filter.maxDepth == null || filter.maxDepth == 0)) {
-      return 'Filtre yok';
-    }
-
     List<String> descriptions = [];
 
-    if (filter.minMagnitude != null || filter.maxMagnitude != null) {
+    if (filter.minMagnitude != null && filter.minMagnitude != 0.0) {
       final min = filter.minMagnitude?.toString() ?? '';
-      final max = filter.maxMagnitude?.toString() ?? '';
-      descriptions.add('Büyüklük: $min-$max');
+      descriptions.add('Büyüklük: $min');
     }
 
-    if (filter.minDepth != null || filter.maxDepth != null) {
-      final min = filter.minDepth?.toString() ?? '';
-      final max = filter.maxDepth?.toString() ?? '';
-      descriptions.add('Derinlik: $min-$max km');
+    if (filter.startDate != DateHelper.getDefaultStartDate()) {
+      descriptions.add(
+        "Seçilen Tarih: ${DateHelper.formatDateForDisplay(filter.startDate)}",
+      );
     }
 
-    return descriptions.join(', ');
+    if (filter.orderBy != OrderBy.timeDesc) {
+      switch (filter.orderBy) {
+        case OrderBy.time:
+          descriptions.add('Zamana göre (Artan)');
+          break;
+        case OrderBy.timeDesc:
+          descriptions.add('Zamana göre (Azalan)');
+          break;
+        case OrderBy.magnitude:
+          descriptions.add('Büyüklüğe göre (Artan)');
+          break;
+        case OrderBy.magnitudeDesc:
+          descriptions.add('Büyüklüğe göre (Azalan)');
+          break;
+      }
+    }
+
+    return descriptions.join('\n');
   }
 
   void _showFilterSheet() {

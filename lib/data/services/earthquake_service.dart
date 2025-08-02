@@ -23,7 +23,7 @@ class EarthquakeFilterParams {
   final int? maxDepth;
   final int? limit;
   final int? offset;
-  final OrderBy? orderBy;
+  final OrderBy orderBy;
   final int? eventId;
 
   EarthquakeFilterParams({
@@ -44,7 +44,7 @@ class EarthquakeFilterParams {
     this.maxDepth,
     this.limit,
     this.offset,
-    this.orderBy,
+    required this.orderBy,
     this.eventId,
   });
 }
