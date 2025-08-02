@@ -4,6 +4,7 @@ import 'package:earthquake_mapp/presentation/widgets/earthquake_card_shimmer.dar
 import 'package:earthquake_mapp/presentation/widgets/earthquake_filter_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../providers/earthquake_provider.dart';
 import '../widgets/earthquake_card.dart';
 import '../widgets/loading_widget.dart';
@@ -37,11 +38,11 @@ class _EarthquakeListScreenState extends ConsumerState<EarthquakeListScreen> {
         title: const Text('Deprem Takip'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.filter_list),
+            icon: FaIcon(FontAwesomeIcons.filter),
             onPressed: _showFilterSheet,
           ),
           IconButton(
-            icon: const Icon(Icons.refresh),
+            icon: FaIcon(FontAwesomeIcons.arrowsRotate),
             onPressed: () {
               ref.read(earthquakeListProvider.notifier).refreshEarthquakes();
             },
@@ -150,7 +151,7 @@ class _EarthquakeListScreenState extends ConsumerState<EarthquakeListScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.info_outline, size: 64, color: Colors.grey),
+            FaIcon(Icons.info_outline, size: 64, color: Colors.grey),
             SizedBox(height: 16),
             Text(
               'Deprem verisi bulunamadı',
@@ -214,7 +215,7 @@ class _EarthquakeListScreenState extends ConsumerState<EarthquakeListScreen> {
       ),
       child: Row(
         children: [
-          Icon(Icons.filter_list, color: Colors.blue[700], size: 16),
+          FaIcon(FontAwesomeIcons.filter, color: Colors.blue[700], size: 16),
           const SizedBox(width: 8),
           Expanded(
             child: Text(
@@ -226,7 +227,11 @@ class _EarthquakeListScreenState extends ConsumerState<EarthquakeListScreen> {
             onTap: () {
               ref.read(earthquakeListProvider.notifier).clearFilter();
             },
-            child: Icon(Icons.close, color: Colors.blue[700], size: 16),
+            child: FaIcon(
+              FontAwesomeIcons.xmark,
+              color: Colors.blue[700],
+              size: 16,
+            ),
           ),
         ],
       ),

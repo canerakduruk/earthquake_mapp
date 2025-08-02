@@ -28,7 +28,7 @@ class BottombarNavScreen extends StatelessWidget {
     return [
       PersistentTabConfig(
         screen: const EarthquakeListScreen(),
-        item: ItemConfig(icon: Icon(Icons.home), title: "Home"),
+        item: ItemConfig(icon: FaIcon(FontAwesomeIcons.house), title: "Home"),
       ),
       PersistentTabConfig(
         screen: const EarthquakeMapScreen(),
