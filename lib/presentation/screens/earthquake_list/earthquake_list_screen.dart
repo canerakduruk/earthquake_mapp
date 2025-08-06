@@ -1,15 +1,15 @@
 import 'package:earthquake_mapp/core/enums/earthquake_enums.dart';
+import 'package:earthquake_mapp/data/services/earthquake_service.dart';
 import 'package:earthquake_mapp/presentation/viewmodels/earthquake_viewmodel.dart';
 import 'package:earthquake_mapp/presentation/widgets/earthquake_card_shimmer.dart';
 import 'package:earthquake_mapp/presentation/widgets/earthquake_filter_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import '../providers/earthquake_provider.dart';
-import '../widgets/earthquake_card.dart';
-import '../widgets/loading_widget.dart';
-import '../../data/services/earthquake_service.dart';
-import '../../core/utils/date_helper.dart';
+import '../../providers/earthquake_provider.dart';
+import '../../widgets/earthquake_card.dart';
+import '../../widgets/loading_widget.dart';
+import '../../../core/utils/date_helper.dart';
 import 'package:logger/logger.dart';
 
 class EarthquakeListScreen extends ConsumerStatefulWidget {
@@ -21,6 +21,8 @@ class EarthquakeListScreen extends ConsumerStatefulWidget {
 }
 
 class _EarthquakeListScreenState extends ConsumerState<EarthquakeListScreen> {
+  String _searchQuery = '';
+
   @override
   void initState() {
     super.initState();
@@ -33,27 +35,58 @@ class _EarthquakeListScreenState extends ConsumerState<EarthquakeListScreen> {
   Widget build(BuildContext context) {
     final earthquakeState = ref.watch(earthquakeListProvider);
 
+    // Arama filtresi uygulama (location, province, district üzerinde)
+    final filteredEarthquakes = earthquakeState.earthquakes.where((e) {
+      final q = _searchQuery.toLowerCase();
+      return (e.location?.toLowerCase().contains(q) ?? false) ||
+          (e.province?.toLowerCase().contains(q) ?? false) ||
+          (e.district?.toLowerCase().contains(q) ?? false);
+    }).toList();
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Deprem Takip'),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(48),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            child: TextField(
+              decoration: InputDecoration(
+                hintText: 'Lokasyona göre ara...',
+                fillColor: Colors.white,
+                filled: true,
+                prefixIcon: const Icon(Icons.search),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(24),
+                  borderSide: BorderSide.none,
+                ),
+              ),
+              onChanged: (value) {
+                setState(() {
+                  _searchQuery = value;
+                });
+              },
+            ),
+          ),
+        ),
         actions: [
           IconButton(
-            icon: FaIcon(FontAwesomeIcons.filter),
+            icon: const FaIcon(FontAwesomeIcons.filter),
             onPressed: _showFilterSheet,
           ),
           IconButton(
-            icon: FaIcon(FontAwesomeIcons.arrowsRotate),
+            icon: const FaIcon(FontAwesomeIcons.arrowsRotate),
             onPressed: () {
               ref.read(earthquakeListProvider.notifier).refreshEarthquakes();
             },
           ),
         ],
       ),
-      body: _buildBody(earthquakeState),
+      body: _buildBody(earthquakeState, filteredEarthquakes),
     );
   }
 
-  Widget _buildBody(EarthquakeState state) {
+  Widget _buildBody(EarthquakeState state, List filteredList) {
     bool logAndCheckNull(Logger logger, String name, Object? value) {
       logger.i("$name: ${value ?? 'null'}");
       return value == null;
@@ -98,17 +131,8 @@ class _EarthquakeListScreenState extends ConsumerState<EarthquakeListScreen> {
           filter.orderBy == OrderBy.timeDesc &&
           noOtherFilters;
 
-      logger.i(isSameDateTime(filter.startDate, defaultStart));
-
-      logger.i(isSameDateTime(filter.endDate, defaultEnd));
-      logger.i(filter.minMagnitude == 0.0 || filter.minMagnitude == null);
-      logger.i(filter.orderBy == OrderBy.timeDesc);
-      logger.i(noOtherFilters);
-
       return result;
     }
-
-    // Yardımcı fonksiyonlar
 
     if (state.isLoading && state.earthquakes.isEmpty) {
       return const LoadingWidget(message: 'Deprem verileri yükleniyor...');
@@ -146,7 +170,7 @@ class _EarthquakeListScreenState extends ConsumerState<EarthquakeListScreen> {
       );
     }
 
-    if (state.earthquakes.isEmpty) {
+    if (filteredList.isEmpty) {
       return const Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -159,7 +183,7 @@ class _EarthquakeListScreenState extends ConsumerState<EarthquakeListScreen> {
             ),
             SizedBox(height: 8),
             Text(
-              'Filtre ayarlarınızı kontrol edin',
+              'Arama kriterlerinize uygun veri yok',
               style: TextStyle(color: Colors.grey),
             ),
           ],
@@ -179,7 +203,7 @@ class _EarthquakeListScreenState extends ConsumerState<EarthquakeListScreen> {
           if (state.isLoading)
             Expanded(
               child: ListView.builder(
-                itemCount: 8, // Kaç tane shimmer göstermek istediğin
+                itemCount: 8,
                 itemBuilder: (context, index) {
                   return const EarthquakeCardShimmer();
                 },
@@ -188,12 +212,12 @@ class _EarthquakeListScreenState extends ConsumerState<EarthquakeListScreen> {
           else
             Expanded(
               child: ListView.builder(
-                itemCount: state.earthquakes.length,
+                itemCount: filteredList.length,
                 itemBuilder: (context, index) {
+                  final earthquake = filteredList[index];
                   return EarthquakeCard(
-                    earthquake: state.earthquakes[index],
-                    onTap: () =>
-                        _showEarthquakeDetail(state.earthquakes[index]),
+                    earthquake: earthquake,
+                    onTap: () => _showEarthquakeDetail(earthquake),
                   );
                 },
               ),
@@ -283,7 +307,7 @@ class _EarthquakeListScreenState extends ConsumerState<EarthquakeListScreen> {
       ),
       builder: (context) {
         return EarthquakeFilterSheet(
-          scrollController: ScrollController(), // veya null geçebilirsin
+          scrollController: ScrollController(),
           initialParams: currentFilter,
           onApplyFilter: (params) {
             ref.read(earthquakeListProvider.notifier).applyFilter(params);
@@ -334,7 +358,6 @@ class _EarthquakeListScreenState extends ConsumerState<EarthquakeListScreen> {
                   ),
                 ),
                 const SizedBox(height: 24),
-
                 _buildDetailTile(
                   Icons.speed,
                   'Büyüklük',
@@ -372,7 +395,6 @@ class _EarthquakeListScreenState extends ConsumerState<EarthquakeListScreen> {
                     'İlçe',
                     earthquake.district!,
                   ),
-
                 const SizedBox(height: 24),
                 Center(
                   child: ElevatedButton(

@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:earthquake_mapp/core/enums/earthquake_enums.dart';
 import 'package:earthquake_mapp/core/utils/date_helper.dart';
+import 'package:earthquake_mapp/core/utils/logger_helper.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logger/logger.dart';
 import '../../domain/entities/earthquake_entity.dart';
@@ -43,7 +44,7 @@ class EarthquakeViewModel extends StateNotifier<EarthquakeState> {
 
   Future<void> loadEarthquakes([EarthquakeFilterParams? params]) async {
     state = state.copyWith(isLoading: true, error: null);
-    logger.d("Parametre burda: $params"); // Dart string interpolation
+    LoggerHelper.debug("Earthquake Viewmodel", "Parametre: $params");
     try {
       final earthquakes = await _earthquakeRepository.getEarthquakes(params);
       state = state.copyWith(

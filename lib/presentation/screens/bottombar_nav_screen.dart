@@ -1,5 +1,6 @@
-import 'package:earthquake_mapp/presentation/screens/earthquake_list_screen.dart';
-import 'package:earthquake_mapp/presentation/screens/earthquake_map_screen.dart';
+import 'package:earthquake_mapp/presentation/screens/earthquake_list/earthquake_list_screen.dart';
+import 'package:earthquake_mapp/presentation/screens/earthquake_map/earthquake_map_screen.dart';
+import 'package:earthquake_mapp/presentation/screens/home/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:persistent_bottom_nav_bar_v2/persistent_bottom_nav_bar_v2.dart';
@@ -27,8 +28,11 @@ class BottombarNavScreen extends StatelessWidget {
   List<PersistentTabConfig> _buildScreens() {
     return [
       PersistentTabConfig(
-        screen: const EarthquakeListScreen(),
-        item: ItemConfig(icon: FaIcon(FontAwesomeIcons.house), title: "Home"),
+        screen: const HomeScreen(),
+        item: ItemConfig(
+          icon: FaIcon(FontAwesomeIcons.house),
+          title: "Ana Menü",
+        ),
       ),
       PersistentTabConfig(
         screen: const EarthquakeMapScreen(),
