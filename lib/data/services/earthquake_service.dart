@@ -3,7 +3,7 @@ import '../../core/network/dio_client.dart';
 import '../../core/constants/api_constants.dart';
 import '../../core/enums/earthquake_enums.dart';
 import '../../core/utils/date_helper.dart';
-import '../models/earthquake_model.dart';
+import '../models/earthquake_model/earthquake_model.dart';
 
 class EarthquakeFilterParams {
   final DateTime startDate;

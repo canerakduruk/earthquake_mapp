@@ -1,5 +1,8 @@
+import 'dart:async';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:earthquake_mapp/core/utils/logger_helper.dart';
+import 'package:earthquake_mapp/core/utils/storage/user_local_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:logger/logger.dart';
@@ -25,8 +28,20 @@ class AuthState {
 class AuthViewModel extends StateNotifier<AuthState> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  late final StreamSubscription<User?> _authSubscription;
 
-  AuthViewModel() : super(AuthState());
+  AuthViewModel() : super(AuthState()) {
+    // Oturum durumunu dinle
+    _authSubscription = _auth.authStateChanges().listen((user) {
+      state = state.copyWith(user: user);
+    });
+  }
+  @override
+  void dispose() {
+    _authSubscription.cancel();
+    super.dispose();
+  }
+
   Logger logger = Logger();
 
   /// Giriş yap
@@ -42,6 +57,10 @@ class AuthViewModel extends StateNotifier<AuthState> {
       );
       LoggerHelper.debug('Auth', 'Giriş başarılı: ${result.user?.email}');
       state = state.copyWith(isLoading: false, user: result.user, error: null);
+      await UserLocalStorage.saveUser(
+        email: result.user?.email ?? '',
+        uid: result.user?.uid ?? '',
+      );
     } on FirebaseAuthException catch (e, st) {
       LoggerHelper.err('Auth', 'FirebaseAuthException: ${e.message}', e, st);
       state = state.copyWith(isLoading: false, error: e.message);

@@ -1,12 +1,14 @@
+import 'package:earthquake_mapp/presentation/providers/auth_provider.dart';
 import 'package:earthquake_mapp/presentation/screens/home/profile/edit_profile_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -51,7 +53,9 @@ class ProfileScreen extends StatelessWidget {
             ProfileMenu(
               text: "Çıkış Yap",
               iconData: FontAwesomeIcons.rightFromBracket,
-              press: () {},
+              press: () async {
+                await ref.read(authViewModelProvider.notifier).signOut();
+              },
             ),
           ],
         ),
@@ -72,11 +76,7 @@ class ProfilePic extends StatelessWidget {
         fit: StackFit.expand,
         clipBehavior: Clip.none,
         children: [
-          const CircleAvatar(
-            backgroundImage: NetworkImage(
-              "https://i.postimg.cc/0jqKB6mS/Profile-Image.png",
-            ),
-          ),
+          const CircleAvatar(),
           Positioned(
             right: -16,
             bottom: 0,
