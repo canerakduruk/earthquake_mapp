@@ -1,5 +1,5 @@
 import 'package:earthquake_mapp/presentation/providers/auth_provider.dart';
-import 'package:earthquake_mapp/presentation/screens/home/profile/edit_profile_screen.dart';
+import 'package:earthquake_mapp/presentation/screens/home/profile/edit_profile/edit_profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';

@@ -26,12 +26,15 @@ class ZoomAndLocationButtons extends StatelessWidget {
         const SizedBox(height: 8),
         FloatingActionButton(
           mini: true,
+          heroTag: "zoomIn",
           onPressed: onZoomIn,
           child: const Icon(Icons.add),
         ),
         const SizedBox(height: 8),
         FloatingActionButton(
           mini: true,
+          heroTag: "zoomOut",
+
           onPressed: onZoomOut,
           child: const Icon(Icons.remove),
         ),

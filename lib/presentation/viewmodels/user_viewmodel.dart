@@ -45,9 +45,8 @@ class UserViewModel extends StateNotifier<List<UserModel>> {
   }
 
   // Read (Get) tek kullanıcı
-  Future<UserModel?> getUserById(String id) async {
-    try {
-      final doc = await _usersCollection.doc(id).get();
+  Stream<UserModel?> getUserStreamById(String id) {
+    return _usersCollection.doc(id).snapshots().map((doc) {
       if (doc.exists) {
         return UserModel.fromJson({
           ...doc.data() as Map<String, dynamic>,
@@ -55,21 +54,24 @@ class UserViewModel extends StateNotifier<List<UserModel>> {
         });
       }
       return null;
-    } catch (e) {
-      rethrow;
-    }
+    });
   }
 
   // Update kullanıcı
-  Future<void> updateUser(UserModel user) async {
-    try {
-      await _usersCollection.doc(user.id).update(user.toJson());
-      state = [
-        for (final u in state)
-          if (u.id == user.id) user else u,
-      ];
-    } catch (e) {
-      rethrow;
+
+  Future<void> updateUser(UserModel updatedUser) async {
+    // Firestore'da güncelle
+    await _usersCollection.doc(updatedUser.id).set(updatedUser.toJson());
+
+    // Eğer state içinde kullanıcı listesi tutuyorsan, güncelleyip notify et
+    final index = state.indexWhere((u) => u.id == updatedUser.id);
+    if (index != -1) {
+      final newList = [...state];
+      newList[index] = updatedUser;
+      state = newList;
+    } else {
+      // Yoksa listeye ekle
+      state = [...state, updatedUser];
     }
   }
 
