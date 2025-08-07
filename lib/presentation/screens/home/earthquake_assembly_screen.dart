@@ -11,6 +11,7 @@ class EarthquakeAssemblyScreen extends StatefulWidget {
 
 class _EarthquakeAssemblyScreenState extends State<EarthquakeAssemblyScreen> {
   late final WebViewController _controller;
+  bool _isLoading = true;
 
   final String allowedUrl =
       'https://www.turkiye.gov.tr/afet-ve-acil-durum-yonetimi-acil-toplanma-alani-sorgulama';
@@ -23,11 +24,17 @@ class _EarthquakeAssemblyScreenState extends State<EarthquakeAssemblyScreen> {
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
       ..setNavigationDelegate(
         NavigationDelegate(
+          onPageStarted: (_) {
+            setState(() => _isLoading = true);
+          },
+          onPageFinished: (_) {
+            setState(() => _isLoading = false);
+          },
           onNavigationRequest: (NavigationRequest request) {
             if (request.url == allowedUrl) {
-              return NavigationDecision.navigate; // izin ver
+              return NavigationDecision.navigate;
             } else {
-              return NavigationDecision.prevent; // başka linklere izin verme
+              return NavigationDecision.prevent;
             }
           },
         ),
@@ -39,7 +46,12 @@ class _EarthquakeAssemblyScreenState extends State<EarthquakeAssemblyScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Toplanma Alanı Öğren')),
-      body: WebViewWidget(controller: _controller),
+      body: Stack(
+        children: [
+          WebViewWidget(controller: _controller),
+          if (_isLoading) const Center(child: CircularProgressIndicator()),
+        ],
+      ),
     );
   }
 }
