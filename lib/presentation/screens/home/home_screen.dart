@@ -1,5 +1,6 @@
 import 'package:earthquake_mapp/presentation/providers/auth_provider.dart';
 import 'package:earthquake_mapp/presentation/screens/form/login_form.dart';
+import 'package:earthquake_mapp/presentation/screens/home/earthquake_assembly_screen.dart';
 import 'package:earthquake_mapp/presentation/screens/home/profile/profile_screen.dart';
 import 'package:earthquake_mapp/presentation/screens/home/settings_screen.dart';
 import 'package:flutter/material.dart';
@@ -47,8 +48,11 @@ class HomeScreen extends ConsumerWidget {
       },
       () {
         // Toplanma yerleri ekranına git (henüz yoksa boş bırak)
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Toplanma Yerleri açılacak")),
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const EarthquakeAssemblyScreen(),
+          ),
         );
       },
 
