@@ -1,8 +1,6 @@
+import 'package:earthquake_mapp/core/routes/app_routes.dart';
 import 'package:earthquake_mapp/presentation/providers/auth_provider.dart';
 import 'package:earthquake_mapp/presentation/screens/form/login_form.dart';
-import 'package:earthquake_mapp/presentation/screens/home/earthquake_assembly_screen.dart';
-import 'package:earthquake_mapp/presentation/screens/home/profile/profile_screen.dart';
-import 'package:earthquake_mapp/presentation/screens/home/settings_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -31,10 +29,10 @@ class HomeScreen extends ConsumerWidget {
     final List<VoidCallback> actions = [
       () {
         if (user != null) {
-          Navigator.push(
+          Navigator.of(
             context,
-            MaterialPageRoute(builder: (context) => const ProfileScreen()),
-          );
+            rootNavigator: true,
+          ).pushNamed(AppRoutes.profile);
         } else {
           showModalBottomSheet(
             context: context,
@@ -47,24 +45,18 @@ class HomeScreen extends ConsumerWidget {
         }
       },
       () {
-        // Toplanma yerleri ekranına git (henüz yoksa boş bırak)
-        Navigator.push(
+        Navigator.of(
           context,
-          MaterialPageRoute(
-            builder: (context) => const EarthquakeAssemblyScreen(),
-          ),
-        );
-      },
-
-      () {
-        // Ayarlar ekranı
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const SettingsScreen()),
-        );
+          rootNavigator: true,
+        ).pushNamed(AppRoutes.earthquakeAssembly);
       },
       () {
-        // Bildirimler ekranı
+        Navigator.of(
+          context,
+          rootNavigator: true,
+        ).pushNamed(AppRoutes.settings);
+      },
+      () {
         ScaffoldMessenger.of(
           context,
         ).showSnackBar(const SnackBar(content: Text("Bildirimler açılacak")));

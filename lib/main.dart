@@ -1,19 +1,19 @@
-import 'package:earthquake_mapp/presentation/screens/bottombar_nav_screen.dart';
-
+import 'package:earthquake_mapp/core/routes/app_router.dart';
+import 'package:earthquake_mapp/core/routes/app_routes.dart';
+import 'package:earthquake_mapp/core/utils/logger_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:logger/logger.dart';
 
 void main() async {
-  final logger = Logger();
-
   WidgetsFlutterBinding.ensureInitialized();
+
   try {
     await Firebase.initializeApp();
   } catch (error) {
-    logger.e("Firebase Hatası:", error: error);
+    LoggerHelper.err("Main:", "Firebase Error -> $error");
   }
+
   runApp(const ProviderScope(child: MainApp()));
 }
 
@@ -22,6 +22,11 @@ class MainApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return MaterialApp(home: const BottombarNavScreen());
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Earthquake App',
+      initialRoute: AppRoutes.bottomBarNav,
+      onGenerateRoute: AppRouter.generateRoute,
+    );
   }
 }
