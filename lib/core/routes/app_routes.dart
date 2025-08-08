@@ -21,4 +21,6 @@ class AppRoutes {
 
   // bottombar navigation (eğer gerekirse)
   static const bottomBarNav = '/bottombar_nav';
+
+  static const defaultScreen = '/';
 }

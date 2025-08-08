@@ -19,14 +19,12 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const EarthquakeListScreen());
       case AppRoutes.earthquakeMap:
         return MaterialPageRoute(builder: (_) => const EarthquakeMapScreen());
-
       case AppRoutes.loginForm:
         return MaterialPageRoute(builder: (_) => const LoginForm());
       case AppRoutes.registerForm:
         return MaterialPageRoute(builder: (_) => const RegisterForm());
       case AppRoutes.home:
         return MaterialPageRoute(builder: (_) => const HomeScreen());
-
       case AppRoutes.editProfile:
         return MaterialPageRoute(builder: (_) => const EditProfileScreen());
       case AppRoutes.profile:
@@ -35,18 +33,18 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (_) => const EarthquakeAssemblyScreen(),
         );
-
       case AppRoutes.settings:
         return MaterialPageRoute(builder: (_) => const SettingsScreen());
       case AppRoutes.bottomBarNav:
         return MaterialPageRoute(builder: (_) => const BottombarNavScreen());
 
+      // Eğer gelen settings.name == '/' gibi bir şeyse onu da ana sayfaya yönlendir:
+      case AppRoutes.defaultScreen:
+        return MaterialPageRoute(builder: (_) => const BottombarNavScreen());
+
       default:
-        return MaterialPageRoute(
-          builder: (_) => Scaffold(
-            body: Center(child: Text('Sayfa bulunamadı: ${settings.name}')),
-          ),
-        );
+        // Bilinmeyen route gelirse anasayfaya yönlendir (uygulamayı kapatma!)
+        return MaterialPageRoute(builder: (_) => const EarthquakeListScreen());
     }
   }
 }

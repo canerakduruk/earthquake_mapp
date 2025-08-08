@@ -17,6 +17,7 @@ class _LoginFormState extends ConsumerState<LoginForm> {
   final _formKey = GlobalKey<FormState>();
   String email = '';
   String password = '';
+  bool _obscurePassword = true; // 👀 Şifre göster/gizle
 
   void _submit() {
     LoggerHelper.info("Login Form", "signIn çağrılıyor");
@@ -61,16 +62,19 @@ class _LoginFormState extends ConsumerState<LoginForm> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                // 📌 Modal tutamacı
                 Center(
                   child: Container(
                     width: 40,
                     height: 5,
                     margin: const EdgeInsets.only(bottom: 10),
                     decoration: BoxDecoration(
+                      color: Colors.grey[400],
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
                 ),
+
                 const Text(
                   "Giriş Yap",
                   style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
@@ -91,11 +95,23 @@ class _LoginFormState extends ConsumerState<LoginForm> {
                 const SizedBox(height: 10),
 
                 TextFormField(
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: "Şifre",
-                    prefixIcon: Icon(FontAwesomeIcons.lock),
+                    prefixIcon: const Icon(FontAwesomeIcons.lock),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _obscurePassword
+                            ? Icons.visibility_off
+                            : Icons.visibility,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _obscurePassword = !_obscurePassword;
+                        });
+                      },
+                    ),
                   ),
-                  obscureText: true,
+                  obscureText: _obscurePassword,
                   validator: (value) => value!.length < 6
                       ? "Şifre en az 6 karakter olmalı"
                       : null,
@@ -106,9 +122,7 @@ class _LoginFormState extends ConsumerState<LoginForm> {
                 authState.isLoading
                     ? const Center(child: CircularProgressIndicator())
                     : ElevatedButton.icon(
-                        onPressed: () {
-                          _submit();
-                        },
+                        onPressed: _submit,
                         icon: const Icon(FontAwesomeIcons.rightToBracket),
                         label: const Text("Giriş Yap"),
                       ),

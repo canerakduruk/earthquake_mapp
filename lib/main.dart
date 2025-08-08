@@ -10,6 +10,7 @@ void main() async {
 
   try {
     await Firebase.initializeApp();
+    LoggerHelper.info("Main:", "Firebase başlatıldı.");
   } catch (error) {
     LoggerHelper.err("Main:", "Firebase Error -> $error");
   }
@@ -25,7 +26,6 @@ class MainApp extends ConsumerWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Earthquake App',
-      initialRoute: AppRoutes.bottomBarNav,
       onGenerateRoute: AppRouter.generateRoute,
     );
   }

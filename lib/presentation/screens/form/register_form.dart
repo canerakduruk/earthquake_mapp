@@ -1,4 +1,5 @@
 import 'package:earthquake_mapp/presentation/providers/auth_provider.dart';
+import 'package:earthquake_mapp/presentation/screens/form/login_form.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -23,6 +24,9 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
   String lastName = '';
   DateTime? birthDate;
   final TextEditingController _birthDateController = TextEditingController();
+
+  bool _isPasswordVisible = false;
+  bool _isConfirmPasswordVisible = false;
 
   void _nextStep() {
     if (_formKey.currentState!.validate()) {
@@ -167,26 +171,50 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
         ),
         const SizedBox(height: 10),
         TextFormField(
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
             labelText: "Şifre",
-            prefixIcon: Icon(FontAwesomeIcons.lock),
+            prefixIcon: const Icon(FontAwesomeIcons.lock),
+            suffixIcon: IconButton(
+              icon: Icon(
+                _isPasswordVisible ? Icons.visibility_off : Icons.visibility,
+              ),
+              onPressed: () {
+                setState(() {
+                  _isPasswordVisible = !_isPasswordVisible;
+                });
+              },
+            ),
           ),
-          obscureText: true,
+          obscureText: !_isPasswordVisible,
           validator: (value) =>
               value!.length < 6 ? "Şifre en az 6 karakter olmalı" : null,
           onSaved: (value) => password = value!,
         ),
+
         const SizedBox(height: 10),
         TextFormField(
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
             labelText: "Şifre Tekrar",
-            prefixIcon: Icon(FontAwesomeIcons.lock),
+            prefixIcon: const Icon(FontAwesomeIcons.lock),
+            suffixIcon: IconButton(
+              icon: Icon(
+                _isConfirmPasswordVisible
+                    ? Icons.visibility_off
+                    : Icons.visibility,
+              ),
+              onPressed: () {
+                setState(() {
+                  _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
+                });
+              },
+            ),
           ),
-          obscureText: true,
+          obscureText: !_isConfirmPasswordVisible,
           validator: (value) =>
               value!.isEmpty ? "Şifre tekrarını giriniz" : null,
           onSaved: (value) => confirmPassword = value!,
         ),
+
         const SizedBox(height: 20),
         ElevatedButton(onPressed: _nextStep, child: const Text("Devam Et")),
         const SizedBox(height: 10),
@@ -205,7 +233,7 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
                       top: Radius.circular(20),
                     ),
                   ),
-                  builder: (_) => const RegisterForm(),
+                  builder: (_) => const LoginForm(),
                 );
               },
               icon: const Icon(FontAwesomeIcons.rightToBracket),
