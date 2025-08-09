@@ -1,6 +1,6 @@
 import 'package:earthquake_mapp/core/utils/logger_helper.dart';
 import 'package:earthquake_mapp/presentation/providers/auth_provider.dart';
-import 'package:earthquake_mapp/presentation/screens/form/register_form.dart';
+import 'package:earthquake_mapp/presentation/screens/auth/register_form.dart';
 import 'package:earthquake_mapp/presentation/viewmodels/auth_viewmodel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

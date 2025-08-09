@@ -1,6 +1,6 @@
 import 'package:earthquake_mapp/core/routes/app_routes.dart';
 import 'package:earthquake_mapp/presentation/providers/auth_provider.dart';
-import 'package:earthquake_mapp/presentation/screens/form/login_form.dart';
+import 'package:earthquake_mapp/presentation/screens/auth/login_form.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
