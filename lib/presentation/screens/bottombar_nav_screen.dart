@@ -28,12 +28,11 @@ class _BottombarNavScreenState extends ConsumerState<BottombarNavScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     ref.listen<AuthState>(authViewModelProvider, (previous, next) {
       if (next.user == null && previous?.user != null) {
-        // Önce bottombar tabını ana menüye al
         controller.jumpToTab(0);
-
-        // Sonra navigation stack'i temizleyip BottombarNavScreen'i baştan aç
         Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(builder: (_) => const BottombarNavScreen()),
           (route) => false,
@@ -44,8 +43,14 @@ class _BottombarNavScreenState extends ConsumerState<BottombarNavScreen> {
     return PersistentTabView(
       controller: controller,
       tabs: _buildScreens(),
-      navBarBuilder: (navBarConfig) =>
-          Style8BottomNavBar(navBarConfig: navBarConfig),
+      navBarBuilder: (navBarConfig) => Style8BottomNavBar(
+        navBarConfig: navBarConfig,
+        navBarDecoration: NavBarDecoration(
+          color: theme
+              .colorScheme
+              .surface, // Burada koyu tema için surface renk kullandık
+        ),
+      ),
     );
   }
 
