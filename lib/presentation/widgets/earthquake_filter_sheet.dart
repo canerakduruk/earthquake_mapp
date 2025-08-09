@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import '../../data/services/earthquake_service.dart';
 import '../../core/enums/earthquake_enums.dart';
@@ -55,25 +56,27 @@ class _EarthquakeFilterSheetState extends State<EarthquakeFilterSheet> {
             ),
           ),
           const SizedBox(height: 20),
-          const Text(
-            'Deprem Filtresi',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+
+          Text(
+            'earthquake_filter'.tr(),
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
+
           const SizedBox(height: 24),
 
-          _buildSectionTitle('Tarih'),
+          _buildSectionTitle('date'.tr()),
           const SizedBox(height: 12),
           _buildDateField(
-            'Tarih Seç',
+            'select_date'.tr(),
             selectedDate,
             (date) => setState(() => selectedDate = date),
           ),
           const SizedBox(height: 24),
 
-          _buildSectionTitle('Büyüklük'),
+          _buildSectionTitle('magnitude'.tr()),
           const SizedBox(height: 12),
           _buildNumberField(
-            'Min Büyüklük',
+            'min_magnitude'.tr(),
             minMagnitude,
             (value) => setState(() => minMagnitude = value),
             min: 0.0,
@@ -81,7 +84,7 @@ class _EarthquakeFilterSheetState extends State<EarthquakeFilterSheet> {
           ),
           const SizedBox(height: 24),
 
-          _buildSectionTitle('Sıralama'),
+          _buildSectionTitle('order_by'.tr()),
           const SizedBox(height: 12),
           _buildOrderBySelector(orderBy),
 
@@ -92,14 +95,14 @@ class _EarthquakeFilterSheetState extends State<EarthquakeFilterSheet> {
               Expanded(
                 child: OutlinedButton(
                   onPressed: _resetFilters,
-                  child: const Text('Sıfırla'),
+                  child: Text('reset'.tr()),
                 ),
               ),
               const SizedBox(width: 16),
               Expanded(
                 child: ElevatedButton(
                   onPressed: _applyFilters,
-                  child: const Text('Uygula'),
+                  child: Text('apply'.tr()),
                 ),
               ),
             ],
@@ -137,6 +140,7 @@ class _EarthquakeFilterSheetState extends State<EarthquakeFilterSheet> {
               initialDate: date,
               firstDate: DateTime(1999, 1, 1),
               lastDate: DateTime.now(),
+              helpText: 'select_date'.tr(), // Tarih seçici başlığı da çevrildi
             );
             if (picked != null) {
               onChanged(picked);
@@ -160,6 +164,8 @@ class _EarthquakeFilterSheetState extends State<EarthquakeFilterSheet> {
       ],
     );
   }
+
+  // Diğer methodlarda da sabit metinler çevrilmeli:
 
   Widget _buildNumberField(
     String label,
@@ -185,7 +191,7 @@ class _EarthquakeFilterSheetState extends State<EarthquakeFilterSheet> {
               horizontal: 12,
               vertical: 16,
             ),
-            hintText: 'Değer girin',
+            hintText: 'enter_value'.tr(), // Değer girin -> çeviri anahtarı
           ),
           onChanged: (text) {
             if (text.isEmpty) {
@@ -208,9 +214,9 @@ class _EarthquakeFilterSheetState extends State<EarthquakeFilterSheet> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Sıralama',
-          style: TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
+        Text(
+          'order_by'.tr(),
+          style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
         ),
         const SizedBox(height: 8),
         GestureDetector(
@@ -255,9 +261,12 @@ class _EarthquakeFilterSheetState extends State<EarthquakeFilterSheet> {
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
-              const Text(
-                'Sıralama Seçin',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              Text(
+                'select_order'.tr(),
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const SizedBox(height: 12),
               ...OrderBy.values.map((order) {
@@ -283,13 +292,13 @@ class _EarthquakeFilterSheetState extends State<EarthquakeFilterSheet> {
   String _getOrderByDisplayName(OrderBy order) {
     switch (order) {
       case OrderBy.time:
-        return 'Zamana göre (Artan)';
+        return 'order_time_asc'.tr();
       case OrderBy.timeDesc:
-        return 'Zamana göre (Azalan)';
+        return 'order_time_desc'.tr();
       case OrderBy.magnitude:
-        return 'Büyüklüğe göre (Artan)';
+        return 'order_magnitude_asc'.tr();
       case OrderBy.magnitudeDesc:
-        return 'Büyüklüğe göre (Azalan)';
+        return 'order_magnitude_desc'.tr();
     }
   }
 

@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart'; // eklendi
 
 class ChangePasswordModal extends StatefulWidget {
   const ChangePasswordModal({super.key});
@@ -44,7 +45,9 @@ class _ChangePasswordModalState extends State<ChangePasswordModal> {
 
     if (oldPass.isEmpty || newPass.isEmpty || confirmPass.isEmpty) {
       setState(() {
-        _errorMessage = 'Lütfen tüm alanları doldurun';
+        _errorMessage = tr(
+          'change_password.please_fill_all_fields',
+        ); // Lokalize edildi
         _isLoading = false;
       });
       return;
@@ -52,7 +55,9 @@ class _ChangePasswordModalState extends State<ChangePasswordModal> {
 
     if (newPass != confirmPass) {
       setState(() {
-        _errorMessage = 'Yeni şifreler eşleşmiyor';
+        _errorMessage = tr(
+          'change_password.passwords_do_not_match',
+        ); // Lokalize edildi
         _isLoading = false;
       });
       return;
@@ -61,7 +66,7 @@ class _ChangePasswordModalState extends State<ChangePasswordModal> {
     final user = _auth.currentUser;
     if (user == null) {
       setState(() {
-        _errorMessage = 'Kullanıcı bulunamadı';
+        _errorMessage = tr('change_password.user_not_found'); // Lokalize edildi
         _isLoading = false;
       });
       return;
@@ -79,7 +84,9 @@ class _ChangePasswordModalState extends State<ChangePasswordModal> {
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Şifre başarıyla değiştirildi')),
+        SnackBar(
+          content: Text(tr('change_password.password_changed_successfully')),
+        ), // Lokalize edildi
       );
       Navigator.of(context).pop();
 
@@ -88,7 +95,10 @@ class _ChangePasswordModalState extends State<ChangePasswordModal> {
       _confirmPasswordController.clear();
     } catch (e) {
       setState(() {
-        _errorMessage = 'Hata: ${e.toString()}';
+        _errorMessage = tr(
+          'change_password.error_occurred',
+          args: [e.toString()],
+        ); // Lokalize edildi
       });
     } finally {
       if (mounted) {
@@ -156,9 +166,9 @@ class _ChangePasswordModalState extends State<ChangePasswordModal> {
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
-            const Text(
-              'Şifre Değiştir',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            Text(
+              tr('change_password.title'), // Lokalize edildi
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             if (_errorMessage != null) ...[
               const SizedBox(height: 12),
@@ -172,7 +182,9 @@ class _ChangePasswordModalState extends State<ChangePasswordModal> {
             TextFormField(
               controller: _oldPasswordController,
               decoration: inputDecoration.copyWith(
-                labelText: 'Eski Şifre',
+                labelText: tr(
+                  'change_password.old_password',
+                ), // Lokalize edildi
                 prefixIcon: const Icon(Icons.lock_outline),
                 suffixIcon: IconButton(
                   icon: Icon(
@@ -194,7 +206,9 @@ class _ChangePasswordModalState extends State<ChangePasswordModal> {
             TextFormField(
               controller: _newPasswordController,
               decoration: inputDecoration.copyWith(
-                labelText: 'Yeni Şifre',
+                labelText: tr(
+                  'change_password.new_password',
+                ), // Lokalize edildi
                 prefixIcon: const Icon(Icons.lock),
                 suffixIcon: IconButton(
                   icon: Icon(
@@ -216,7 +230,9 @@ class _ChangePasswordModalState extends State<ChangePasswordModal> {
             TextFormField(
               controller: _confirmPasswordController,
               decoration: inputDecoration.copyWith(
-                labelText: 'Yeni Şifre (Tekrar)',
+                labelText: tr(
+                  'change_password.confirm_new_password',
+                ), // Lokalize edildi
                 prefixIcon: const Icon(Icons.lock),
                 suffixIcon: IconButton(
                   icon: Icon(
@@ -236,9 +252,9 @@ class _ChangePasswordModalState extends State<ChangePasswordModal> {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: _changePassword,
-              child: const Text('Şifreyi Değiştir'),
+              onPressed: _changePassword, // Lokalize edildi
               style: changePasswordButtonStyle,
+              child: Text(tr('change_password.change_password_button')),
             ),
             const SizedBox(height: 20),
           ],

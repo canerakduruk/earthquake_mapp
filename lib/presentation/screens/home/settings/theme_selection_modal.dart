@@ -1,6 +1,7 @@
 import 'package:earthquake_mapp/presentation/providers/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ThemeSelectionModal extends ConsumerWidget {
   const ThemeSelectionModal({super.key});
@@ -8,9 +9,10 @@ class ThemeSelectionModal extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeModeProvider);
-    final selectedTheme = _themeModeToString(themeMode);
+    final selectedTheme = _themeModeToString(themeMode, context);
 
-    final themes = ["Açık", "Koyu", "Sistem Varsayılanı"];
+    final themes = ['theme_light'.tr(), 'theme_dark'.tr(), 'theme_system'.tr()];
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -20,7 +22,7 @@ class ThemeSelectionModal extends ConsumerWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Buraya tutamaç çizgisi ekle
+          // Tutamaç çizgisi
           Container(
             width: 40,
             height: 5,
@@ -31,9 +33,9 @@ class ThemeSelectionModal extends ConsumerWidget {
             ),
           ),
 
-          const Text(
-            "Tema Seçimi",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          Text(
+            'theme_selection'.tr(),
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 16),
 
@@ -47,8 +49,7 @@ class ThemeSelectionModal extends ConsumerWidget {
               onTap: () {
                 ref
                     .read(themeModeProvider.notifier)
-                    .setTheme(_stringToThemeMode(theme));
-
+                    .setTheme(_stringToThemeMode(theme, context));
                 Navigator.pop(context);
               },
             );
@@ -59,26 +60,21 @@ class ThemeSelectionModal extends ConsumerWidget {
     );
   }
 
-  String _themeModeToString(ThemeMode mode) {
+  String _themeModeToString(ThemeMode mode, BuildContext context) {
     switch (mode) {
       case ThemeMode.light:
-        return "Açık";
+        return 'theme_light'.tr();
       case ThemeMode.dark:
-        return "Koyu";
+        return 'theme_dark'.tr();
       case ThemeMode.system:
-        return "Sistem Varsayılanı";
+      default:
+        return 'theme_system'.tr();
     }
   }
 
-  ThemeMode _stringToThemeMode(String str) {
-    switch (str) {
-      case "Açık":
-        return ThemeMode.light;
-      case "Koyu":
-        return ThemeMode.dark;
-      case "Sistem Varsayılanı":
-      default:
-        return ThemeMode.system;
-    }
+  ThemeMode _stringToThemeMode(String str, BuildContext context) {
+    if (str == 'theme_light'.tr()) return ThemeMode.light;
+    if (str == 'theme_dark'.tr()) return ThemeMode.dark;
+    return ThemeMode.system;
   }
 }

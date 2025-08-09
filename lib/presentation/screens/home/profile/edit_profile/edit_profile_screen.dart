@@ -4,6 +4,7 @@ import 'package:earthquake_mapp/presentation/providers/user_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:easy_localization/easy_localization.dart'; // eklendi
 
 import 'change_password_modal.dart';
 
@@ -51,7 +52,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       initialDate: _birthDate,
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
-      helpText: 'Doğum Tarihini Seçin',
+      helpText: 'edit_profile.select_birth_date'.tr(),
     );
     if (picked != null && picked != _birthDate) {
       setState(() {
@@ -92,13 +93,15 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Profil başarıyla güncellendi')),
+        SnackBar(content: Text('edit_profile.update_success'.tr())),
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Hata oluştu: $e')));
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('edit_profile.error_occurred'.tr(args: [e.toString()])),
+        ),
+      );
     } finally {
       _setLoading(false);
     }
@@ -137,8 +140,8 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
     return userAsync.when(
       data: (user) {
         if (user == null) {
-          return const Scaffold(
-            body: Center(child: Text('Kullanıcı bulunamadı')),
+          return Scaffold(
+            body: Center(child: Text('edit_profile.user_not_found'.tr())),
           );
         }
 
@@ -154,7 +157,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
         }
 
         return Scaffold(
-          appBar: AppBar(title: const Text('Bilgileri Düzenle')),
+          appBar: AppBar(title: Text('edit_profile.title'.tr())),
           body: Stack(
             children: [
               Padding(
@@ -163,12 +166,12 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                   key: _formKey,
                   child: ListView(
                     children: [
-                      const Text(
-                        'Ad',
+                      Text(
+                        'edit_profile.first_name'.tr(),
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
-                          color: Colors.grey,
+                          color: Colors.grey[700],
                         ),
                       ),
                       const SizedBox(height: 6),
@@ -176,19 +179,19 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                         controller: _firstNameController,
                         decoration: inputDecoration.copyWith(
                           prefixIcon: const Icon(Icons.person),
-                          hintText: 'Adınızı girin',
+                          hintText: 'edit_profile.enter_first_name'.tr(),
                         ),
                         validator: (value) => (value == null || value.isEmpty)
-                            ? 'Ad boş olamaz'
+                            ? 'edit_profile.first_name_required'.tr()
                             : null,
                       ),
                       const SizedBox(height: 16),
-                      const Text(
-                        'Soyad',
+                      Text(
+                        'edit_profile.last_name'.tr(),
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
-                          color: Colors.grey,
+                          color: Colors.grey[700],
                         ),
                       ),
                       const SizedBox(height: 6),
@@ -196,19 +199,19 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                         controller: _lastNameController,
                         decoration: inputDecoration.copyWith(
                           prefixIcon: const Icon(Icons.person_outline),
-                          hintText: 'Soyadınızı girin',
+                          hintText: 'edit_profile.enter_last_name'.tr(),
                         ),
                         validator: (value) => (value == null || value.isEmpty)
-                            ? 'Soyad boş olamaz'
+                            ? 'edit_profile.last_name_required'.tr()
                             : null,
                       ),
                       const SizedBox(height: 16),
-                      const Text(
-                        'Doğum Tarihi',
+                      Text(
+                        'edit_profile.birth_date'.tr(),
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 14,
-                          color: Colors.grey,
+                          color: Colors.grey[700],
                         ),
                       ),
                       const SizedBox(height: 6),
@@ -217,7 +220,7 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                         child: InputDecorator(
                           decoration: inputDecoration.copyWith(
                             prefixIcon: const Icon(Icons.cake),
-                            hintText: 'Tarih seçin',
+                            hintText: 'edit_profile.select_date'.tr(),
                           ),
                           child: Text(
                             "${_birthDate.day}.${_birthDate.month}.${_birthDate.year}",
@@ -229,13 +232,13 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
                       ElevatedButton(
                         onPressed: _onSave,
                         style: saveButtonStyle,
-                        child: const Text('Kaydet'),
+                        child: Text('edit_profile.save'.tr()),
                       ),
                       const SizedBox(height: 16),
                       ElevatedButton.icon(
                         onPressed: _showChangePasswordModal,
                         icon: const Icon(Icons.lock_reset),
-                        label: const Text('Şifre Değiştir'),
+                        label: Text('edit_profile.change_password'.tr()),
                         style: changePasswordButtonStyle,
                       ),
                     ],
@@ -253,7 +256,11 @@ class _EditProfileScreenState extends ConsumerState<EditProfileScreen> {
       },
       loading: () =>
           const Scaffold(body: Center(child: CircularProgressIndicator())),
-      error: (e, _) => Scaffold(body: Center(child: Text('Hata: $e'))),
+      error: (e, _) => Scaffold(
+        body: Center(
+          child: Text('edit_profile.error'.tr(args: [e.toString()])),
+        ),
+      ),
     );
   }
 }

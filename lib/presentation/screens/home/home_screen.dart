@@ -1,3 +1,6 @@
+import 'package:earthquake_mapp/core/utils/logger_helper.dart';
+import 'package:earthquake_mapp/presentation/providers/locale_provider.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:earthquake_mapp/core/routes/app_routes.dart';
 import 'package:earthquake_mapp/presentation/providers/auth_provider.dart';
 import 'package:earthquake_mapp/presentation/screens/auth/login_form.dart';
@@ -20,10 +23,10 @@ class HomeScreen extends ConsumerWidget {
     ];
 
     final List<String> labels = [
-      'Hesabım',
-      'Toplanma Yerleri',
-      'Ayarlar',
-      'Bildirimler',
+      'account'.tr(),
+      'assembly_points'.tr(),
+      'settings'.tr(),
+      'notifications'.tr(),
     ];
 
     final List<VoidCallback> actions = [
@@ -59,7 +62,7 @@ class HomeScreen extends ConsumerWidget {
       () {
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(const SnackBar(content: Text("Bildirimler açılacak")));
+        ).showSnackBar(SnackBar(content: Text('notifications_coming').tr()));
       },
     ];
 

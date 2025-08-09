@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class MagnitudeFilterButton extends StatelessWidget {
   final void Function(int?) onSelected;
@@ -9,13 +10,22 @@ class MagnitudeFilterButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton<int>(
-      tooltip: 'Büyüklük Seçenekleri',
+      tooltip: 'magnitude_filter_tools.tooltip'.tr(),
       onSelected: onSelected,
-      itemBuilder: (context) => const [
-        PopupMenuItem(value: 8, child: Text('8 üstü')),
-        PopupMenuItem(value: 5, child: Text('5 üstü')),
-        PopupMenuItem(value: 3, child: Text('3 üstü')),
-        PopupMenuItem(value: 0, child: Text('Hepsi')),
+      itemBuilder: (context) => [
+        PopupMenuItem(
+          value: 8,
+          child: Text('magnitude_filter_tools.above_8'.tr()),
+        ),
+        PopupMenuItem(
+          value: 5,
+          child: Text('magnitude_filter_tools.above_5'.tr()),
+        ),
+        PopupMenuItem(
+          value: 3,
+          child: Text('magnitude_filter_tools.above_3'.tr()),
+        ),
+        PopupMenuItem(value: 0, child: Text('magnitude_filter_tools.all'.tr())),
       ],
       icon: Container(
         decoration: BoxDecoration(

@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -45,7 +46,7 @@ class _EarthquakeAssemblyScreenState extends State<EarthquakeAssemblyScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Toplanma Alanı Öğren')),
+      appBar: AppBar(title: const Text('find_assembly_key').tr()),
       body: Stack(
         children: [
           WebViewWidget(controller: _controller),

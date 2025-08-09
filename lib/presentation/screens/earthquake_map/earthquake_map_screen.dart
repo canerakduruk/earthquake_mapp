@@ -1,4 +1,5 @@
 import 'package:earthquake_mapp/data/services/earthquake_service.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -159,7 +160,7 @@ class _EarthquakeMapScreenState extends ConsumerState<EarthquakeMapScreen> {
                 padding: const EdgeInsets.all(12),
                 color: Colors.red.withAlpha(120),
                 child: Text(
-                  'Hata oluştu: ${earthquakeState.error}',
+                  tr('error_occurred', args: [earthquakeState.error ?? '']),
                   style: const TextStyle(color: Colors.white),
                 ),
               ),

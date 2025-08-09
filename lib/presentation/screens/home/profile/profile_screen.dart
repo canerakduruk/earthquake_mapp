@@ -3,6 +3,7 @@ import 'package:earthquake_mapp/presentation/screens/home/profile/edit_profile/e
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -12,10 +13,10 @@ class ProfileScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new),
+          icon: const Icon(Icons.arrow_back_ios_new),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text("Profilim"),
+        title: Text('profile.title'.tr()),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(vertical: 20),
@@ -24,7 +25,7 @@ class ProfileScreen extends ConsumerWidget {
             const ProfilePic(),
             const SizedBox(height: 20),
             ProfileMenu(
-              text: "Hesap Bilgileri",
+              text: 'profile.account_info'.tr(),
               iconData: FontAwesomeIcons.userLarge,
               press: () {
                 Navigator.push(
@@ -36,22 +37,22 @@ class ProfileScreen extends ConsumerWidget {
               },
             ),
             ProfileMenu(
-              text: "Kişilerim",
+              text: 'profile.my_contacts'.tr(),
               iconData: FontAwesomeIcons.usersBetweenLines,
               press: () {},
             ),
             ProfileMenu(
-              text: "Konum Ayarları",
+              text: 'profile.location_settings'.tr(),
               iconData: FontAwesomeIcons.locationCrosshairs,
               press: () {},
             ),
             ProfileMenu(
-              text: "Yardım Merkezi",
+              text: 'profile.help_center'.tr(),
               iconData: FontAwesomeIcons.circleQuestion,
               press: () {},
             ),
             ProfileMenu(
-              text: "Çıkış Yap",
+              text: 'profile.sign_out'.tr(),
               iconData: FontAwesomeIcons.rightFromBracket,
               press: () async {
                 await ref.read(authViewModelProvider.notifier).signOut();
@@ -93,7 +94,7 @@ class ProfilePic extends StatelessWidget {
                   backgroundColor: const Color(0xFFF5F6F9),
                 ),
                 onPressed: () {},
-                child: FaIcon(FontAwesomeIcons.camera),
+                child: const FaIcon(FontAwesomeIcons.camera),
               ),
             ),
           ),

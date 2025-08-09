@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import '../../domain/entities/earthquake_entity.dart';
 import '../../core/utils/date_helper.dart';
 
@@ -17,11 +18,9 @@ class EarthquakeCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white38, // düz arka plan
+            color: Colors.white38,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: Colors.grey.shade300,
-            ), // opsiyonel ince kenarlık
+            border: Border.all(color: Colors.grey.shade300),
           ),
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -61,14 +60,14 @@ class EarthquakeCard extends StatelessWidget {
                   Expanded(
                     child: _buildInfoRow(
                       Icons.vertical_align_bottom,
-                      'Derinlik',
+                      'depth'.tr(), // Çeviri anahtarı kullanıldı
                       earthquake.depthDisplay,
                     ),
                   ),
                   Expanded(
                     child: _buildInfoRow(
                       Icons.place,
-                      'Konum',
+                      'coordinates'.tr(), // Çeviri anahtarı kullanıldı
                       earthquake.coordinatesDisplay,
                     ),
                   ),

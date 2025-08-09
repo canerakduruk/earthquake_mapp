@@ -1,7 +1,9 @@
+import 'package:earthquake_mapp/presentation/providers/locale_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class FilterDateSelector extends StatelessWidget {
+class FilterDateSelector extends ConsumerWidget {
   final DateTime selectedDate;
   final bool isOpen;
   final VoidCallback onTap;
@@ -14,7 +16,16 @@ class FilterDateSelector extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final locale = ref.watch(localeProvider);
+
+    // locale örneğin: Locale('tr', 'TR') veya Locale('en', 'US')
+
+    final localeString =
+        locale.countryCode != null && locale.countryCode!.isNotEmpty
+        ? '${locale.languageCode}_${locale.countryCode}'
+        : locale.languageCode;
+
     return GestureDetector(
       onTap: onTap,
       child: Container(
@@ -39,7 +50,7 @@ class FilterDateSelector extends StatelessWidget {
             const SizedBox(width: 6),
             Expanded(
               child: Text(
-                DateFormat.yMMMMd().format(selectedDate),
+                DateFormat.yMMMMd(localeString).format(selectedDate),
                 style: const TextStyle(fontSize: 14, color: Colors.black87),
                 overflow: TextOverflow.ellipsis,
               ),

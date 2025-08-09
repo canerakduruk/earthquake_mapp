@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:earthquake_mapp/core/utils/date_helper.dart';
 
 class EarthquakeDetailModal extends StatelessWidget {
@@ -6,14 +7,14 @@ class EarthquakeDetailModal extends StatelessWidget {
 
   const EarthquakeDetailModal({super.key, required this.earthquake});
 
-  Widget _buildDetailTile(IconData icon, String label, String value) {
+  Widget _buildDetailTile(IconData icon, String labelKey, String value) {
     return Column(
       children: [
         ListTile(
           contentPadding: EdgeInsets.zero,
           leading: Icon(icon, color: Colors.grey[700]),
           title: Text(
-            label,
+            labelKey.tr(),
             style: const TextStyle(fontWeight: FontWeight.bold),
           ),
           subtitle: Text(value),
@@ -50,7 +51,7 @@ class EarthquakeDetailModal extends StatelessWidget {
             const SizedBox(height: 16),
             Center(
               child: Text(
-                'Deprem Detayları',
+                'earthquake_details'.tr(),
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -59,33 +60,41 @@ class EarthquakeDetailModal extends StatelessWidget {
             const SizedBox(height: 24),
             _buildDetailTile(
               Icons.speed,
-              'Büyüklük',
+              'magnitude',
               earthquake.magnitudeDisplay ?? '',
             ),
             _buildDetailTile(
               Icons.access_time,
-              'Tarih',
+              'date',
               DateHelper.formatDateTimeForDisplay(earthquake.dateTime),
             ),
             _buildDetailTile(
               Icons.location_on,
-              'Konum',
+              'location',
               earthquake.location ?? '',
             ),
             _buildDetailTile(
               Icons.map,
-              'Koordinat',
+              'coordinates',
               earthquake.coordinatesDisplay ?? '',
             ),
             _buildDetailTile(
               Icons.vertical_align_bottom,
-              'Derinlik',
+              'depth',
               earthquake.depthDisplay ?? '',
             ),
             if (earthquake.province != null)
-              _buildDetailTile(Icons.location_city, 'İl', earthquake.province!),
+              _buildDetailTile(
+                Icons.location_city,
+                'province',
+                earthquake.province!,
+              ),
             if (earthquake.district != null)
-              _buildDetailTile(Icons.apartment, 'İlçe', earthquake.district!),
+              _buildDetailTile(
+                Icons.apartment,
+                'district',
+                earthquake.district!,
+              ),
             const SizedBox(height: 24),
             Center(
               child: ElevatedButton(
@@ -99,7 +108,7 @@ class EarthquakeDetailModal extends StatelessWidget {
                     vertical: 12,
                   ),
                 ),
-                child: const Text('Kapat'),
+                child: Text('close'.tr()),
               ),
             ),
             const SizedBox(height: 24),

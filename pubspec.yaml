@@ -33,6 +33,8 @@ dependencies:
   cloud_firestore: ^6.0.0
   flutter_svg: ^2.2.0
   shared_preferences: ^2.5.3
+  permission_handler: ^12.0.1
+  easy_localization: ^3.0.8
 
 
 dev_dependencies:
@@ -52,6 +54,8 @@ flutter:
     - assets/icons/pin_logo.png
     - assets/icons/pin_logo_square.png
     - assets/icons/full_logo_horizontal.png
+    - assets/translations/
+
 
 flutter_icons:
   android: true

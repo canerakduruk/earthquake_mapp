@@ -1,8 +1,9 @@
 import 'package:earthquake_mapp/presentation/providers/auth_provider.dart';
 import 'package:earthquake_mapp/presentation/screens/auth/login_form.dart';
+import 'package:earthquake_mapp/presentation/viewmodels/auth_viewmodel.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:intl/intl.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class RegisterForm extends ConsumerStatefulWidget {
@@ -43,8 +44,8 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
 
       if (password != confirmPassword) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Şifreler eşleşmiyor"),
+          SnackBar(
+            content: Text('register.password_mismatch'.tr()),
             backgroundColor: Colors.red,
           ),
         );
@@ -53,15 +54,14 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
 
       if (birthDate == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Doğum tarihi seçiniz"),
+          SnackBar(
+            content: Text('register.birth_date_empty'.tr()),
             backgroundColor: Colors.red,
           ),
         );
         return;
       }
 
-      // ViewModel üzerinden kayıt yap
       await ref
           .read(authViewModelProvider.notifier)
           .signUp(
@@ -79,10 +79,10 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
           SnackBar(content: Text(error), backgroundColor: Colors.red),
         );
       } else {
-        Navigator.pop(context); // Kayıt başarılı ise modalı kapat
+        Navigator.pop(context);
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text("Kayıt başarılı! Giriş yapabilirsiniz."),
+          SnackBar(
+            content: Text('register.register_success'.tr()),
             backgroundColor: Colors.green,
           ),
         );
@@ -96,6 +96,7 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
       initialDate: DateTime(2000),
       firstDate: DateTime(1900),
       lastDate: DateTime.now(),
+      helpText: 'register.select_date'.tr(),
     );
     if (picked != null) {
       setState(() {
@@ -123,7 +124,6 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Tutamaç
                 Center(
                   child: Container(
                     width: 40,
@@ -154,25 +154,26 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const Text(
-          "Kayıt Ol - Adım 1",
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+        Text(
+          'register.step1_title'.tr(),
+          style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 20),
         TextFormField(
-          decoration: const InputDecoration(
-            labelText: "E-posta",
-            prefixIcon: Icon(FontAwesomeIcons.envelope),
+          decoration: InputDecoration(
+            labelText: 'register.email_label'.tr(),
+            prefixIcon: const Icon(FontAwesomeIcons.envelope),
           ),
           keyboardType: TextInputType.emailAddress,
-          validator: (value) => value!.isEmpty ? "E-posta giriniz" : null,
+          validator: (value) =>
+              value!.isEmpty ? 'register.email_empty'.tr() : null,
           onSaved: (value) => email = value!,
         ),
         const SizedBox(height: 10),
         TextFormField(
           decoration: InputDecoration(
-            labelText: "Şifre",
+            labelText: 'register.password_label'.tr(),
             prefixIcon: const Icon(FontAwesomeIcons.lock),
             suffixIcon: IconButton(
               icon: Icon(
@@ -187,14 +188,13 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
           ),
           obscureText: !_isPasswordVisible,
           validator: (value) =>
-              value!.length < 6 ? "Şifre en az 6 karakter olmalı" : null,
+              value!.length < 6 ? 'register.password_length'.tr() : null,
           onSaved: (value) => password = value!,
         ),
-
         const SizedBox(height: 10),
         TextFormField(
           decoration: InputDecoration(
-            labelText: "Şifre Tekrar",
+            labelText: 'register.password_confirm_label'.tr(),
             prefixIcon: const Icon(FontAwesomeIcons.lock),
             suffixIcon: IconButton(
               icon: Icon(
@@ -211,17 +211,19 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
           ),
           obscureText: !_isConfirmPasswordVisible,
           validator: (value) =>
-              value!.isEmpty ? "Şifre tekrarını giriniz" : null,
+              value!.isEmpty ? 'register.password_confirm_empty'.tr() : null,
           onSaved: (value) => confirmPassword = value!,
         ),
-
         const SizedBox(height: 20),
-        ElevatedButton(onPressed: _nextStep, child: const Text("Devam Et")),
+        ElevatedButton(
+          onPressed: _nextStep,
+          child: Text('register.next_button'.tr()),
+        ),
         const SizedBox(height: 10),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text("Zaten kayıtlı mısın?"),
+            Text('register.already_registered'.tr()),
             TextButton.icon(
               onPressed: () {
                 Navigator.pop(context);
@@ -237,7 +239,7 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
                 );
               },
               icon: const Icon(FontAwesomeIcons.rightToBracket),
-              label: const Text("Giriş Yap"),
+              label: Text('register.login_button'.tr()),
             ),
           ],
         ),
@@ -249,42 +251,48 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const Text(
-          "Kayıt Ol - Adım 2",
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+        Text(
+          'register.step2_title'.tr(),
+          style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: 20),
         TextFormField(
-          decoration: const InputDecoration(
-            labelText: "Ad",
-            prefixIcon: Icon(FontAwesomeIcons.user),
+          decoration: InputDecoration(
+            labelText: 'register.first_name_label'.tr(),
+            prefixIcon: const Icon(FontAwesomeIcons.user),
           ),
-          validator: (value) => value!.isEmpty ? "Adınızı giriniz" : null,
+          validator: (value) =>
+              value!.isEmpty ? 'register.first_name_empty'.tr() : null,
           onSaved: (value) => firstName = value!,
         ),
         const SizedBox(height: 10),
         TextFormField(
-          decoration: const InputDecoration(
-            labelText: "Soyad",
-            prefixIcon: Icon(FontAwesomeIcons.user),
+          decoration: InputDecoration(
+            labelText: 'register.last_name_label'.tr(),
+            prefixIcon: const Icon(FontAwesomeIcons.user),
           ),
-          validator: (value) => value!.isEmpty ? "Soyadınızı giriniz" : null,
+          validator: (value) =>
+              value!.isEmpty ? 'register.last_name_empty'.tr() : null,
           onSaved: (value) => lastName = value!,
         ),
         const SizedBox(height: 10),
         TextFormField(
           controller: _birthDateController,
           readOnly: true,
-          decoration: const InputDecoration(
-            labelText: "Doğum Tarihi",
-            prefixIcon: Icon(FontAwesomeIcons.calendarDays),
+          decoration: InputDecoration(
+            labelText: 'register.birth_date_label'.tr(),
+            prefixIcon: const Icon(FontAwesomeIcons.calendarDays),
           ),
           onTap: () => _selectBirthDate(context),
-          validator: (_) => birthDate == null ? "Doğum tarihi seçiniz" : null,
+          validator: (_) =>
+              birthDate == null ? 'register.birth_date_empty'.tr() : null,
         ),
         const SizedBox(height: 20),
-        ElevatedButton(onPressed: _submit, child: const Text("Kayıt Ol")),
+        ElevatedButton(
+          onPressed: _submit,
+          child: Text('register.register_button'.tr()),
+        ),
         const SizedBox(height: 10),
       ],
     );

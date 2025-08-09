@@ -1,3 +1,4 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:earthquake_mapp/core/enums/earthquake_enums.dart';
 import 'package:earthquake_mapp/data/services/earthquake_service.dart';
 import 'package:earthquake_mapp/presentation/viewmodels/earthquake_viewmodel.dart';
@@ -45,14 +46,14 @@ class _EarthquakeListScreenState extends ConsumerState<EarthquakeListScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Deprem Takip'),
+        title: Text('earthquake_tracking'.tr()),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(48),
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
             child: TextField(
               decoration: InputDecoration(
-                hintText: 'Lokasyona göre ara...',
+                hintText: 'search_location'.tr(),
                 fillColor: Colors.white,
                 filled: true,
                 prefixIcon: const Icon(Icons.search),
@@ -72,10 +73,12 @@ class _EarthquakeListScreenState extends ConsumerState<EarthquakeListScreen> {
         actions: [
           IconButton(
             icon: const FaIcon(FontAwesomeIcons.filter),
+            tooltip: 'filter'.tr(),
             onPressed: _showFilterSheet,
           ),
           IconButton(
             icon: const FaIcon(FontAwesomeIcons.arrowsRotate),
+            tooltip: 'refresh'.tr(),
             onPressed: () {
               ref.read(earthquakeListProvider.notifier).refreshEarthquakes();
             },
@@ -135,7 +138,7 @@ class _EarthquakeListScreenState extends ConsumerState<EarthquakeListScreen> {
     }
 
     if (state.isLoading && state.earthquakes.isEmpty) {
-      return const LoadingWidget(message: 'Deprem verileri yükleniyor...');
+      return LoadingWidget(message: 'loading_earthquake_data'.tr());
     }
 
     if (state.error != null) {
@@ -146,7 +149,7 @@ class _EarthquakeListScreenState extends ConsumerState<EarthquakeListScreen> {
             Icon(Icons.error_outline, size: 64, color: Colors.red[300]),
             const SizedBox(height: 16),
             Text(
-              'Bir hata oluştu',
+              'error_occurred'.tr(),
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             const SizedBox(height: 8),
@@ -163,7 +166,7 @@ class _EarthquakeListScreenState extends ConsumerState<EarthquakeListScreen> {
               onPressed: () {
                 ref.read(earthquakeListProvider.notifier).loadEarthquakes();
               },
-              child: const Text('Tekrar Dene'),
+              child: Text('try_again'.tr()),
             ),
           ],
         ),
@@ -171,20 +174,20 @@ class _EarthquakeListScreenState extends ConsumerState<EarthquakeListScreen> {
     }
 
     if (filteredList.isEmpty) {
-      return const Center(
+      return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             FaIcon(Icons.info_outline, size: 64, color: Colors.grey),
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
             Text(
-              'Deprem verisi bulunamadı',
-              style: TextStyle(fontSize: 18, color: Colors.grey),
+              'no_earthquake_data'.tr(),
+              style: const TextStyle(fontSize: 18, color: Colors.grey),
             ),
-            SizedBox(height: 8),
+            const SizedBox(height: 8),
             Text(
-              'Arama kriterlerinize uygun veri yok',
-              style: TextStyle(color: Colors.grey),
+              'no_data_for_search'.tr(),
+              style: const TextStyle(color: Colors.grey),
             ),
           ],
         ),
@@ -228,6 +231,35 @@ class _EarthquakeListScreenState extends ConsumerState<EarthquakeListScreen> {
   }
 
   Widget _buildFilterInfo(EarthquakeFilterParams filter) {
+    List<String> descriptions = [];
+
+    if (filter.minMagnitude != null && filter.minMagnitude != 0.0) {
+      final min = filter.minMagnitude?.toString() ?? '';
+      descriptions.add('magnitude_filter'.tr(namedArgs: {'min': min}));
+    }
+
+    if (filter.startDate != DateHelper.getDefaultStartDate()) {
+      final formattedDate = DateHelper.formatDateForDisplay(filter.startDate);
+      descriptions.add('selected_date'.tr(namedArgs: {'date': formattedDate}));
+    }
+
+    if (filter.orderBy != OrderBy.timeDesc) {
+      switch (filter.orderBy) {
+        case OrderBy.time:
+          descriptions.add('order_time_asc'.tr());
+          break;
+        case OrderBy.timeDesc:
+          descriptions.add('order_time_desc'.tr());
+          break;
+        case OrderBy.magnitude:
+          descriptions.add('order_magnitude_asc'.tr());
+          break;
+        case OrderBy.magnitudeDesc:
+          descriptions.add('order_magnitude_desc'.tr());
+          break;
+      }
+    }
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(12),
@@ -243,7 +275,7 @@ class _EarthquakeListScreenState extends ConsumerState<EarthquakeListScreen> {
           const SizedBox(width: 8),
           Expanded(
             child: Text(
-              _getFilterDescription(filter),
+              descriptions.join('\n'),
               style: TextStyle(color: Colors.blue[700], fontSize: 12),
             ),
           ),
@@ -260,40 +292,6 @@ class _EarthquakeListScreenState extends ConsumerState<EarthquakeListScreen> {
         ],
       ),
     );
-  }
-
-  String _getFilterDescription(EarthquakeFilterParams filter) {
-    List<String> descriptions = [];
-
-    if (filter.minMagnitude != null && filter.minMagnitude != 0.0) {
-      final min = filter.minMagnitude?.toString() ?? '';
-      descriptions.add('Büyüklük: $min');
-    }
-
-    if (filter.startDate != DateHelper.getDefaultStartDate()) {
-      descriptions.add(
-        "Seçilen Tarih: ${DateHelper.formatDateForDisplay(filter.startDate)}",
-      );
-    }
-
-    if (filter.orderBy != OrderBy.timeDesc) {
-      switch (filter.orderBy) {
-        case OrderBy.time:
-          descriptions.add('Zamana göre (Artan)');
-          break;
-        case OrderBy.timeDesc:
-          descriptions.add('Zamana göre (Azalan)');
-          break;
-        case OrderBy.magnitude:
-          descriptions.add('Büyüklüğe göre (Artan)');
-          break;
-        case OrderBy.magnitudeDesc:
-          descriptions.add('Büyüklüğe göre (Azalan)');
-          break;
-      }
-    }
-
-    return descriptions.join('\n');
   }
 
   void _showFilterSheet() {
@@ -351,7 +349,7 @@ class _EarthquakeListScreenState extends ConsumerState<EarthquakeListScreen> {
                 const SizedBox(height: 16),
                 Center(
                   child: Text(
-                    'Deprem Detayları',
+                    'earthquake_details'.tr(),
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -360,39 +358,39 @@ class _EarthquakeListScreenState extends ConsumerState<EarthquakeListScreen> {
                 const SizedBox(height: 24),
                 _buildDetailTile(
                   Icons.speed,
-                  'Büyüklük',
+                  'magnitude'.tr(),
                   earthquake.magnitudeDisplay,
                 ),
                 _buildDetailTile(
                   Icons.access_time,
-                  'Tarih',
+                  'date'.tr(),
                   DateHelper.formatDateTimeForDisplay(earthquake.dateTime),
                 ),
                 _buildDetailTile(
                   Icons.location_on,
-                  'Konum',
+                  'location'.tr(),
                   earthquake.location ?? '',
                 ),
                 _buildDetailTile(
                   Icons.map,
-                  'Koordinat',
+                  'coordinates'.tr(),
                   earthquake.coordinatesDisplay,
                 ),
                 _buildDetailTile(
                   Icons.vertical_align_bottom,
-                  'Derinlik',
+                  'depth'.tr(),
                   earthquake.depthDisplay,
                 ),
                 if (earthquake.province != null)
                   _buildDetailTile(
                     Icons.location_city,
-                    'İl',
+                    'province'.tr(),
                     earthquake.province!,
                   ),
                 if (earthquake.district != null)
                   _buildDetailTile(
                     Icons.apartment,
-                    'İlçe',
+                    'district'.tr(),
                     earthquake.district!,
                   ),
                 const SizedBox(height: 24),
@@ -408,7 +406,7 @@ class _EarthquakeListScreenState extends ConsumerState<EarthquakeListScreen> {
                         vertical: 12,
                       ),
                     ),
-                    child: const Text('Kapat'),
+                    child: Text('close'.tr()),
                   ),
                 ),
                 const SizedBox(height: 24),

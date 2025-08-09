@@ -1,8 +1,11 @@
 import 'package:earthquake_mapp/presentation/providers/theme_provider.dart';
+import 'package:earthquake_mapp/presentation/screens/home/settings/language_selection_modal.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'theme_selection_modal.dart';
+import 'notification_settings_modal.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -10,19 +13,18 @@ class SettingsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeModeProvider);
-    final selectedTheme = _themeModeToString(themeMode);
+    final selectedTheme = _themeModeToString(themeMode, context);
 
     return Scaffold(
-      appBar: AppBar(title: const Text("Ayarlar")),
+      appBar: AppBar(title: Text('settings'.tr())),
       body: ListView(
         children: [
           const SizedBox(height: 16),
-          _buildSectionTitle("Genel"),
-          ListTile(
-            leading: FaIcon(FontAwesomeIcons.moon, size: 20),
-            title: const Text("Tema"),
-            subtitle: Text(selectedTheme),
-            trailing: const Icon(Icons.chevron_right),
+          _buildSectionTitle('general'.tr()),
+          _buildTile(
+            FontAwesomeIcons.moon,
+            'theme'.tr(),
+            subtitle: selectedTheme,
             onTap: () {
               showModalBottomSheet(
                 context: context,
@@ -33,36 +35,70 @@ class SettingsScreen extends ConsumerWidget {
               );
             },
           ),
-          _buildTile(FontAwesomeIcons.language, "Dil", "Uygulama Dili"),
+          _buildTile(
+            FontAwesomeIcons.language,
+            'language'.tr(),
+            subtitle: context.locale.languageCode == 'tr'
+                ? 'Türkçe'
+                : 'English',
+            onTap: () {
+              showModalBottomSheet(
+                context: context,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                ),
+                builder: (_) => const LanguageSelectionModal(),
+              );
+            },
+          ),
           const SizedBox(height: 24),
-          _buildSectionTitle("Bildirimler"),
-          _buildTile(FontAwesomeIcons.bell, "Uygulama Bildirimleri"),
-          _buildTile(FontAwesomeIcons.envelope, "E-posta Bildirimleri"),
-          _buildTile(FontAwesomeIcons.clock, "Sessiz Saatler"),
+          _buildSectionTitle('notifications'.tr()),
+          _buildTile(
+            FontAwesomeIcons.bell,
+            'notification_settings'.tr(),
+            onTap: () {
+              showModalBottomSheet(
+                context: context,
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+                ),
+                builder: (_) => const NotificationSettingsModal(),
+              );
+            },
+          ),
           const SizedBox(height: 24),
-          _buildSectionTitle("Yardım ve Destek"),
-          _buildTile(FontAwesomeIcons.commentDots, "Geri Bildirim Gönder"),
-          _buildTile(FontAwesomeIcons.circleQuestion, "SSS"),
-          _buildTile(FontAwesomeIcons.headset, "Destek ile İletişim"),
+          _buildSectionTitle('help_support'.tr()),
+          _buildTile(FontAwesomeIcons.commentDots, 'send_feedback'.tr()),
+          _buildTile(FontAwesomeIcons.circleQuestion, 'faq'.tr()),
+          _buildTile(FontAwesomeIcons.headset, 'contact_support'.tr()),
           const SizedBox(height: 24),
-          _buildSectionTitle("Hakkında"),
-          _buildTile(FontAwesomeIcons.circleInfo, "Uygulama Sürümü", "v1.0.0"),
-          _buildTile(FontAwesomeIcons.userShield, "Gizlilik Politikası"),
-          _buildTile(FontAwesomeIcons.fileContract, "Kullanım Şartları"),
-          _buildTile(FontAwesomeIcons.codeBranch, "Açık Kaynak Lisansları"),
+          _buildSectionTitle('about'.tr()),
+          _buildTile(
+            FontAwesomeIcons.circleInfo,
+            'app_version'.tr(),
+            subtitle: 'v1.0.0',
+          ),
+          _buildTile(FontAwesomeIcons.userShield, 'privacy_policy'.tr()),
+          _buildTile(FontAwesomeIcons.fileContract, 'terms_of_use'.tr()),
+          _buildTile(FontAwesomeIcons.codeBranch, 'open_source_licenses'.tr()),
           const SizedBox(height: 32),
         ],
       ),
     );
   }
 
-  Widget _buildTile(IconData icon, String title, [String? subtitle]) {
+  Widget _buildTile(
+    IconData icon,
+    String title, {
+    VoidCallback? onTap,
+    String? subtitle,
+  }) {
     return ListTile(
       leading: FaIcon(icon, size: 20),
       title: Text(title),
       subtitle: subtitle != null ? Text(subtitle) : null,
       trailing: const Icon(Icons.chevron_right),
-      onTap: null,
+      onTap: onTap,
     );
   }
 
@@ -76,15 +112,15 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  String _themeModeToString(ThemeMode mode) {
+  String _themeModeToString(ThemeMode mode, BuildContext context) {
     switch (mode) {
       case ThemeMode.light:
-        return "Açık";
+        return 'theme_light'.tr();
       case ThemeMode.dark:
-        return "Koyu";
+        return 'theme_dark'.tr();
       case ThemeMode.system:
       default:
-        return "Sistem Varsayılanı";
+        return 'theme_system'.tr();
     }
   }
 }

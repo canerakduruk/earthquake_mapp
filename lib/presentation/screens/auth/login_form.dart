@@ -1,7 +1,7 @@
-import 'package:earthquake_mapp/core/utils/logger_helper.dart';
 import 'package:earthquake_mapp/presentation/providers/auth_provider.dart';
 import 'package:earthquake_mapp/presentation/screens/auth/register_form.dart';
 import 'package:earthquake_mapp/presentation/viewmodels/auth_viewmodel.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -17,15 +17,12 @@ class _LoginFormState extends ConsumerState<LoginForm> {
   final _formKey = GlobalKey<FormState>();
   String email = '';
   String password = '';
-  bool _obscurePassword = true; // 👀 Şifre göster/gizle
+  bool _obscurePassword = true;
 
   void _submit() {
-    LoggerHelper.info("Login Form", "signIn çağrılıyor");
-
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       ref.read(authViewModelProvider.notifier).signIn(email, password);
-      LoggerHelper.info("Login Form", "Çalıştı");
     }
   }
 
@@ -42,9 +39,9 @@ class _LoginFormState extends ConsumerState<LoginForm> {
 
       if (next.user != null && previous?.user == null) {
         Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Başarıyla giriş yapıldı')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('login.login_success'.tr())));
       }
     });
 
@@ -62,7 +59,6 @@ class _LoginFormState extends ConsumerState<LoginForm> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // 📌 Modal tutamacı
                 Center(
                   child: Container(
                     width: 40,
@@ -75,28 +71,31 @@ class _LoginFormState extends ConsumerState<LoginForm> {
                   ),
                 ),
 
-                const Text(
-                  "Giriş Yap",
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                Text(
+                  'login.title'.tr(),
+                  style: const TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 20),
 
                 TextFormField(
-                  decoration: const InputDecoration(
-                    labelText: "E-posta",
-                    prefixIcon: Icon(FontAwesomeIcons.envelope),
+                  decoration: InputDecoration(
+                    labelText: 'login.email_label'.tr(),
+                    prefixIcon: const Icon(FontAwesomeIcons.envelope),
                   ),
                   keyboardType: TextInputType.emailAddress,
                   validator: (value) =>
-                      value!.isEmpty ? "E-posta giriniz" : null,
+                      value!.isEmpty ? 'login.email_empty'.tr() : null,
                   onSaved: (value) => email = value!,
                 ),
                 const SizedBox(height: 10),
 
                 TextFormField(
                   decoration: InputDecoration(
-                    labelText: "Şifre",
+                    labelText: 'login.password_label'.tr(),
                     prefixIcon: const Icon(FontAwesomeIcons.lock),
                     suffixIcon: IconButton(
                       icon: Icon(
@@ -112,9 +111,8 @@ class _LoginFormState extends ConsumerState<LoginForm> {
                     ),
                   ),
                   obscureText: _obscurePassword,
-                  validator: (value) => value!.length < 6
-                      ? "Şifre en az 6 karakter olmalı"
-                      : null,
+                  validator: (value) =>
+                      value!.length < 6 ? 'login.password_length'.tr() : null,
                   onSaved: (value) => password = value!,
                 ),
                 const SizedBox(height: 20),
@@ -124,7 +122,7 @@ class _LoginFormState extends ConsumerState<LoginForm> {
                     : ElevatedButton.icon(
                         onPressed: _submit,
                         icon: const Icon(FontAwesomeIcons.rightToBracket),
-                        label: const Text("Giriş Yap"),
+                        label: Text('login.login_button'.tr()),
                       ),
 
                 const SizedBox(height: 10),
@@ -132,7 +130,7 @@ class _LoginFormState extends ConsumerState<LoginForm> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text("Hesabın yok mu?"),
+                    Text('login.no_account'.tr()),
                     TextButton.icon(
                       onPressed: () {
                         Navigator.pop(context);
@@ -148,7 +146,7 @@ class _LoginFormState extends ConsumerState<LoginForm> {
                         );
                       },
                       icon: const Icon(FontAwesomeIcons.userPlus),
-                      label: const Text("Kayıt Ol"),
+                      label: Text('login.register_button'.tr()),
                     ),
                   ],
                 ),
