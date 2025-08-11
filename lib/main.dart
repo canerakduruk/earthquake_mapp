@@ -1,4 +1,5 @@
 import 'package:earthquake_mapp/core/routes/app_router.dart';
+import 'package:earthquake_mapp/core/theme/app_theme.dart';
 import 'package:earthquake_mapp/core/utils/logger_helper.dart';
 import 'package:earthquake_mapp/presentation/providers/locale_provider.dart';
 import 'package:earthquake_mapp/presentation/providers/theme_provider.dart';
@@ -45,8 +46,8 @@ class MainApp extends ConsumerWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Earthquake App',
-      theme: ThemeData.light(),
-      darkTheme: ThemeData.dark(),
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
       themeMode: themeMode,
       locale: locale,
       supportedLocales: context.supportedLocales,

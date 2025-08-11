@@ -1,6 +1,7 @@
 import 'package:earthquake_mapp/presentation/providers/auth_provider.dart';
 import 'package:earthquake_mapp/presentation/screens/auth/login_form.dart';
 import 'package:earthquake_mapp/presentation/viewmodels/auth_viewmodel.dart';
+import 'package:earthquake_mapp/presentation/widgets/custom_elevated_button.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -215,9 +216,15 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
           onSaved: (value) => confirmPassword = value!,
         ),
         const SizedBox(height: 20),
-        ElevatedButton(
+
+        CustomElevatedButton(
+          text: 'register.next_button'.tr(),
           onPressed: _nextStep,
-          child: Text('register.next_button'.tr()),
+          width: double.infinity,
+          height: 48,
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          textColor: Theme.of(context).colorScheme.onPrimary,
+          borderRadius: 12,
         ),
         const SizedBox(height: 10),
         Row(
@@ -289,9 +296,14 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
               birthDate == null ? 'register.birth_date_empty'.tr() : null,
         ),
         const SizedBox(height: 20),
-        ElevatedButton(
+        CustomElevatedButton(
+          text: 'register.register_button'.tr(),
           onPressed: _submit,
-          child: Text('register.register_button'.tr()),
+          width: double.infinity,
+          height: 48,
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          textColor: Theme.of(context).colorScheme.onPrimary,
+          borderRadius: 12,
         ),
         const SizedBox(height: 10),
       ],

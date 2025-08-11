@@ -60,7 +60,8 @@ class _BottombarNavScreenState extends ConsumerState<BottombarNavScreen> {
         screen: const HomeScreen(),
         item: ItemConfig(
           icon: FaIcon(FontAwesomeIcons.house),
-          title: "home_menu".tr(), // burayı çeviri anahtarına göre değiştir
+          title: "home_menu".tr(),
+          activeForegroundColor: Theme.of(context).colorScheme.primary,
         ),
       ),
       PersistentTabConfig(
@@ -68,6 +69,7 @@ class _BottombarNavScreenState extends ConsumerState<BottombarNavScreen> {
         item: ItemConfig(
           icon: FaIcon(FontAwesomeIcons.mapLocation),
           title: "map".tr(),
+          activeForegroundColor: Theme.of(context).colorScheme.primary,
         ),
       ),
       PersistentTabConfig(
@@ -75,6 +77,7 @@ class _BottombarNavScreenState extends ConsumerState<BottombarNavScreen> {
         item: ItemConfig(
           icon: FaIcon(FontAwesomeIcons.solidRectangleList),
           title: "earthquakes".tr(),
+          activeForegroundColor: Theme.of(context).colorScheme.primary,
         ),
       ),
     ];

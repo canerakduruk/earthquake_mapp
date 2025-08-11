@@ -92,7 +92,7 @@ class HomeScreen extends ConsumerWidget {
                       style: ElevatedButton.styleFrom(
                         elevation: 0,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(24),
                         ),
                       ),
                       child: Column(

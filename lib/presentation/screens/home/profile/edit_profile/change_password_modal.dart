@@ -1,6 +1,7 @@
+import 'package:earthquake_mapp/presentation/widgets/custom_elevated_button.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart'; // eklendi
+import 'package:easy_localization/easy_localization.dart';
 
 class ChangePasswordModal extends StatefulWidget {
   const ChangePasswordModal({super.key});
@@ -18,7 +19,6 @@ class _ChangePasswordModalState extends State<ChangePasswordModal> {
   bool _isLoading = false;
   String? _errorMessage;
 
-  // Şifre göster/gizle için değişkenler
   bool _obscureOldPassword = true;
   bool _obscureNewPassword = true;
   bool _obscureConfirmPassword = true;
@@ -45,9 +45,7 @@ class _ChangePasswordModalState extends State<ChangePasswordModal> {
 
     if (oldPass.isEmpty || newPass.isEmpty || confirmPass.isEmpty) {
       setState(() {
-        _errorMessage = tr(
-          'change_password.please_fill_all_fields',
-        ); // Lokalize edildi
+        _errorMessage = tr('change_password.please_fill_all_fields');
         _isLoading = false;
       });
       return;
@@ -55,9 +53,7 @@ class _ChangePasswordModalState extends State<ChangePasswordModal> {
 
     if (newPass != confirmPass) {
       setState(() {
-        _errorMessage = tr(
-          'change_password.passwords_do_not_match',
-        ); // Lokalize edildi
+        _errorMessage = tr('change_password.passwords_do_not_match');
         _isLoading = false;
       });
       return;
@@ -66,7 +62,7 @@ class _ChangePasswordModalState extends State<ChangePasswordModal> {
     final user = _auth.currentUser;
     if (user == null) {
       setState(() {
-        _errorMessage = tr('change_password.user_not_found'); // Lokalize edildi
+        _errorMessage = tr('change_password.user_not_found');
         _isLoading = false;
       });
       return;
@@ -86,7 +82,7 @@ class _ChangePasswordModalState extends State<ChangePasswordModal> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(tr('change_password.password_changed_successfully')),
-        ), // Lokalize edildi
+        ),
       );
       Navigator.of(context).pop();
 
@@ -98,7 +94,7 @@ class _ChangePasswordModalState extends State<ChangePasswordModal> {
         _errorMessage = tr(
           'change_password.error_occurred',
           args: [e.toString()],
-        ); // Lokalize edildi
+        );
       });
     } finally {
       if (mounted) {
@@ -119,29 +115,26 @@ class _ChangePasswordModalState extends State<ChangePasswordModal> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     final inputDecoration = InputDecoration(
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(16),
         borderSide: BorderSide.none,
       ),
       filled: true,
-      fillColor: const Color.fromARGB(38, 255, 136, 0),
-      prefixIconColor: const Color.fromARGB(255, 133, 93, 66),
-      labelStyle: TextStyle(color: Colors.grey[700]),
-    );
-
-    final changePasswordButtonStyle = ElevatedButton.styleFrom(
-      backgroundColor: const Color(0xFFFFB74D),
-      foregroundColor: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      minimumSize: const Size.fromHeight(48),
+      fillColor: theme.colorScheme.primary.withOpacity(0.1),
+      prefixIconColor: theme.colorScheme.primary,
+      labelStyle: TextStyle(
+        color: theme.colorScheme.onSurface.withOpacity(0.7),
+      ),
     );
 
     if (_isLoading) {
       return SizedBox(
         height: 150,
         child: Center(
-          child: CircularProgressIndicator(color: Colors.orange[700]),
+          child: CircularProgressIndicator(color: theme.colorScheme.primary),
         ),
       );
     }
@@ -162,19 +155,21 @@ class _ChangePasswordModalState extends State<ChangePasswordModal> {
               width: 40,
               height: 5,
               decoration: BoxDecoration(
-                color: Colors.grey[400],
+                color: theme.colorScheme.onSurface.withOpacity(0.3),
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
             Text(
-              tr('change_password.title'), // Lokalize edildi
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              tr('change_password.title'),
+              style: theme.textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
             ),
             if (_errorMessage != null) ...[
               const SizedBox(height: 12),
               Text(
                 _errorMessage!,
-                style: const TextStyle(color: Colors.red),
+                style: TextStyle(color: theme.colorScheme.error),
                 textAlign: TextAlign.center,
               ),
             ],
@@ -182,16 +177,14 @@ class _ChangePasswordModalState extends State<ChangePasswordModal> {
             TextFormField(
               controller: _oldPasswordController,
               decoration: inputDecoration.copyWith(
-                labelText: tr(
-                  'change_password.old_password',
-                ), // Lokalize edildi
+                labelText: tr('change_password.old_password'),
                 prefixIcon: const Icon(Icons.lock_outline),
                 suffixIcon: IconButton(
                   icon: Icon(
                     _obscureOldPassword
                         ? Icons.visibility_off
                         : Icons.visibility,
-                    color: Colors.grey,
+                    color: theme.colorScheme.onSurface.withOpacity(0.6),
                   ),
                   onPressed: () {
                     setState(() {
@@ -206,16 +199,14 @@ class _ChangePasswordModalState extends State<ChangePasswordModal> {
             TextFormField(
               controller: _newPasswordController,
               decoration: inputDecoration.copyWith(
-                labelText: tr(
-                  'change_password.new_password',
-                ), // Lokalize edildi
+                labelText: tr('change_password.new_password'),
                 prefixIcon: const Icon(Icons.lock),
                 suffixIcon: IconButton(
                   icon: Icon(
                     _obscureNewPassword
                         ? Icons.visibility_off
                         : Icons.visibility,
-                    color: Colors.grey,
+                    color: theme.colorScheme.onSurface.withOpacity(0.6),
                   ),
                   onPressed: () {
                     setState(() {
@@ -230,16 +221,14 @@ class _ChangePasswordModalState extends State<ChangePasswordModal> {
             TextFormField(
               controller: _confirmPasswordController,
               decoration: inputDecoration.copyWith(
-                labelText: tr(
-                  'change_password.confirm_new_password',
-                ), // Lokalize edildi
+                labelText: tr('change_password.confirm_new_password'),
                 prefixIcon: const Icon(Icons.lock),
                 suffixIcon: IconButton(
                   icon: Icon(
                     _obscureConfirmPassword
                         ? Icons.visibility_off
                         : Icons.visibility,
-                    color: Colors.grey,
+                    color: theme.colorScheme.onSurface.withOpacity(0.6),
                   ),
                   onPressed: () {
                     setState(() {
@@ -251,10 +240,13 @@ class _ChangePasswordModalState extends State<ChangePasswordModal> {
               obscureText: _obscureConfirmPassword,
             ),
             const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _changePassword, // Lokalize edildi
-              style: changePasswordButtonStyle,
-              child: Text(tr('change_password.change_password_button')),
+            CustomElevatedButton(
+              text: tr('change_password.change_password_button'),
+              onPressed: _changePassword,
+              isLoading: _isLoading,
+              backgroundColor: theme.colorScheme.primary,
+              textColor: theme.colorScheme.onPrimary,
+              icon: const Icon(Icons.lock_open),
             ),
             const SizedBox(height: 20),
           ],

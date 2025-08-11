@@ -1,4 +1,3 @@
-import 'package:earthquake_mapp/presentation/providers/locale_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_map_marker_cluster_plus/flutter_map_marker_cluster_plus.dart';
@@ -35,7 +34,10 @@ class EarthquakeMap extends StatelessWidget {
       ),
       children: [
         TileLayer(
-          urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+          urlTemplate: Theme.of(context).brightness == Brightness.dark
+              ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png' // Dark mode tile URL
+              : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', // Light mode tile URL
+          subdomains: const ['a', 'b', 'c'], // Tile sunucusu subdomainleri
           userAgentPackageName: 'com.example.earthquake_mapp',
         ),
         MarkerClusterLayerWidget(

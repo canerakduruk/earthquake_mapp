@@ -6,46 +6,47 @@ class EarthquakeCardShimmer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final bgColor = isDark ? Colors.grey.shade900 : Colors.white38;
+    final borderColor = isDark ? Colors.grey.shade700 : Colors.grey.shade300;
+    final boxColor = isDark ? Colors.grey.shade700 : Colors.grey.shade300;
+    final fadeTheme = isDark ? FadeTheme.dark : FadeTheme.light;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Container(
         decoration: BoxDecoration(
-          color: Colors.white38,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.grey.shade300),
+          color: bgColor,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: borderColor),
         ),
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Üst satır: büyüklük chip'i + konum yazısı yer tutucu
             Row(
               children: [
-                // Büyüklük chip'i için oval shimmer
-                FadeShimmer.round(size: 32, fadeTheme: FadeTheme.light),
+                FadeShimmer.round(size: 32, fadeTheme: fadeTheme),
                 const SizedBox(width: 12),
-                // Konum için geniş dikdörtgen shimmer (width verildi!)
                 Expanded(
                   child: FadeShimmer(
                     height: 16,
                     width: double.infinity,
                     radius: 4,
-                    fadeTheme: FadeTheme.light,
+                    fadeTheme: fadeTheme,
                   ),
                 ),
               ],
             ),
-
             const SizedBox(height: 12),
-
-            // Tarih ve saat ikon + yazı
             Row(
               children: [
                 Container(
                   width: 16,
                   height: 16,
                   decoration: BoxDecoration(
-                    color: Colors.grey.shade300,
+                    color: boxColor,
                     borderRadius: BorderRadius.circular(4),
                   ),
                 ),
@@ -55,20 +56,19 @@ class EarthquakeCardShimmer extends StatelessWidget {
                     height: 14,
                     width: double.infinity,
                     radius: 4,
-                    fadeTheme: FadeTheme.light,
+                    fadeTheme: fadeTheme,
                     millisecondsDelay: 100,
                   ),
                 ),
               ],
             ),
-
             const SizedBox(height: 8),
-
-            // İki bilgi satırı: Derinlik ve Koordinat yer tutucuları
             Row(
               children: [
-                Expanded(child: _buildInfoShimmer()),
-                Expanded(child: _buildInfoShimmer(delay: 200)),
+                Expanded(child: _buildInfoShimmer(fadeTheme, boxColor)),
+                Expanded(
+                  child: _buildInfoShimmer(fadeTheme, boxColor, delay: 200),
+                ),
               ],
             ),
           ],
@@ -77,15 +77,19 @@ class EarthquakeCardShimmer extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoShimmer({int delay = 0}) {
+  Widget _buildInfoShimmer(
+    FadeTheme fadeTheme,
+    Color boxColor, {
+    int delay = 0,
+  }) {
     return Row(
       children: [
         Container(
           width: 16,
           height: 16,
           decoration: BoxDecoration(
-            color: Colors.grey.shade300,
-            borderRadius: BorderRadius.circular(4),
+            color: boxColor,
+            borderRadius: BorderRadius.circular(24),
           ),
         ),
         const SizedBox(width: 4),
@@ -97,7 +101,7 @@ class EarthquakeCardShimmer extends StatelessWidget {
                 height: 12,
                 width: 50,
                 radius: 4,
-                fadeTheme: FadeTheme.light,
+                fadeTheme: fadeTheme,
                 millisecondsDelay: delay,
               ),
               const SizedBox(height: 4),
@@ -105,7 +109,7 @@ class EarthquakeCardShimmer extends StatelessWidget {
                 height: 14,
                 width: double.infinity,
                 radius: 4,
-                fadeTheme: FadeTheme.light,
+                fadeTheme: fadeTheme,
                 millisecondsDelay: delay + 100,
               ),
             ],

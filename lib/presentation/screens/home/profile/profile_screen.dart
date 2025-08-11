@@ -10,6 +10,9 @@ class ProfileScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
@@ -17,6 +20,9 @@ class ProfileScreen extends ConsumerWidget {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text('profile.title'.tr()),
+        backgroundColor: theme.appBarTheme.backgroundColor,
+        foregroundColor: theme.appBarTheme.foregroundColor,
+        elevation: theme.appBarTheme.elevation,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(vertical: 20),
@@ -70,6 +76,9 @@ class ProfilePic extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return SizedBox(
       height: 115,
       width: 115,
@@ -77,7 +86,10 @@ class ProfilePic extends StatelessWidget {
         fit: StackFit.expand,
         clipBehavior: Clip.none,
         children: [
-          const CircleAvatar(),
+          CircleAvatar(
+            backgroundColor: colorScheme.surfaceVariant,
+            // İsterseniz profil resmi koyabilirsiniz
+          ),
           Positioned(
             right: -16,
             bottom: 0,
@@ -86,15 +98,18 @@ class ProfilePic extends StatelessWidget {
               width: 46,
               child: TextButton(
                 style: TextButton.styleFrom(
-                  foregroundColor: Colors.orange,
+                  foregroundColor: colorScheme.primary,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(50),
-                    side: const BorderSide(color: Colors.white),
+                    side: BorderSide(color: colorScheme.background),
                   ),
-                  backgroundColor: const Color(0xFFF5F6F9),
+                  backgroundColor: colorScheme.background,
                 ),
                 onPressed: () {},
-                child: const FaIcon(FontAwesomeIcons.camera),
+                child: FaIcon(
+                  FontAwesomeIcons.camera,
+                  color: colorScheme.primary,
+                ),
               ),
             ),
           ),
@@ -118,29 +133,32 @@ class ProfileMenu extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
       child: TextButton(
         style: TextButton.styleFrom(
-          foregroundColor: const Color(0xFFFF7643),
+          foregroundColor: colorScheme.primary,
           padding: const EdgeInsets.all(20),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
           ),
-          backgroundColor: const Color(0xFFF5F6F9),
+          backgroundColor: colorScheme.surfaceVariant,
         ),
         onPressed: press,
         child: Row(
           children: [
-            FaIcon(iconData, color: const Color(0xFFFF7643), size: 22),
+            FaIcon(iconData, color: colorScheme.primary, size: 22),
             const SizedBox(width: 20),
             Expanded(
               child: Text(
                 text,
-                style: const TextStyle(color: Color(0xFF757575)),
+                style: TextStyle(color: colorScheme.onSurfaceVariant),
               ),
             ),
-            const Icon(Icons.arrow_forward_ios, color: Color(0xFF757575)),
+            Icon(Icons.arrow_forward_ios, color: colorScheme.onSurfaceVariant),
           ],
         ),
       ),

@@ -1,6 +1,7 @@
 import 'package:earthquake_mapp/presentation/providers/auth_provider.dart';
 import 'package:earthquake_mapp/presentation/screens/auth/register_form.dart';
 import 'package:earthquake_mapp/presentation/viewmodels/auth_viewmodel.dart';
+import 'package:earthquake_mapp/presentation/widgets/custom_elevated_button.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -119,10 +120,15 @@ class _LoginFormState extends ConsumerState<LoginForm> {
 
                 authState.isLoading
                     ? const Center(child: CircularProgressIndicator())
-                    : ElevatedButton.icon(
+                    : CustomElevatedButton(
+                        text: 'login.login_button'.tr(),
                         onPressed: _submit,
-                        icon: const Icon(FontAwesomeIcons.rightToBracket),
-                        label: Text('login.login_button'.tr()),
+                        isLoading: authState.isLoading,
+                        width: double.infinity,
+                        height: 48,
+                        backgroundColor: Theme.of(context).colorScheme.primary,
+                        textColor: Theme.of(context).colorScheme.onPrimary,
+                        borderRadius: 12,
                       ),
 
                 const SizedBox(height: 10),

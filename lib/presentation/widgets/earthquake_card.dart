@@ -11,16 +11,33 @@ class EarthquakeCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    // Tema moduna göre arka plan rengini seç
+    final Color cardBackgroundColor = theme.brightness == Brightness.light
+        ? Colors
+              .white38 // Açık modda hafif transparan beyaz
+        : Colors.grey.shade900; // Koyu modda koyu gri
+
+    // Yazı ve ikon renkleri temaya göre uyumlu
+    final Color textAndIconColor = theme.brightness == Brightness.light
+        ? Colors.black! // Açık modda koyu gri
+        : Colors.grey[300]!; // Koyu modda açık gri
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(24),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.white38,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: Colors.grey.shade300),
+            color: cardBackgroundColor,
+            borderRadius: BorderRadius.circular(24),
+            border: Border.all(
+              color: theme.brightness == Brightness.light
+                  ? Colors.grey.shade300
+                  : Colors.grey.shade700,
+            ),
           ),
           padding: const EdgeInsets.all(16),
           child: Column(
@@ -33,9 +50,10 @@ class EarthquakeCard extends StatelessWidget {
                   Expanded(
                     child: Text(
                       earthquake.location ?? '',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
+                        color: textAndIconColor,
                       ),
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
@@ -46,11 +64,11 @@ class EarthquakeCard extends StatelessWidget {
               const SizedBox(height: 12),
               Row(
                 children: [
-                  Icon(Icons.access_time, size: 16, color: Colors.grey[600]),
+                  Icon(Icons.access_time, size: 16, color: textAndIconColor),
                   const SizedBox(width: 4),
                   Text(
                     DateHelper.formatDateTimeForDisplay(earthquake.dateTime),
-                    style: TextStyle(color: Colors.grey[600], fontSize: 14),
+                    style: TextStyle(color: textAndIconColor, fontSize: 14),
                   ),
                 ],
               ),
@@ -60,15 +78,17 @@ class EarthquakeCard extends StatelessWidget {
                   Expanded(
                     child: _buildInfoRow(
                       Icons.vertical_align_bottom,
-                      'depth'.tr(), // Çeviri anahtarı kullanıldı
+                      'depth'.tr(),
                       earthquake.depthDisplay,
+                      textAndIconColor,
                     ),
                   ),
                   Expanded(
                     child: _buildInfoRow(
                       Icons.place,
-                      'coordinates'.tr(), // Çeviri anahtarı kullanıldı
+                      'coordinates'.tr(),
                       earthquake.coordinatesDisplay,
+                      textAndIconColor,
                     ),
                   ),
                 ],
@@ -101,19 +121,16 @@ class EarthquakeCard extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoRow(IconData icon, String label, String value) {
+  Widget _buildInfoRow(IconData icon, String label, String value, Color color) {
     return Row(
       children: [
-        Icon(icon, size: 16, color: Colors.grey[600]),
+        Icon(icon, size: 16, color: color),
         const SizedBox(width: 4),
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                label,
-                style: TextStyle(fontSize: 12, color: Colors.grey[600]),
-              ),
+              Text(label, style: TextStyle(fontSize: 12, color: color)),
               Text(
                 value,
                 style: const TextStyle(
