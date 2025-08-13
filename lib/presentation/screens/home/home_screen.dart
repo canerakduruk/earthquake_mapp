@@ -14,6 +14,7 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(authViewModelProvider).user;
+    final locale = ref.watch(localeProvider);
 
     final List<IconData> iconList = [
       FontAwesomeIcons.user,
