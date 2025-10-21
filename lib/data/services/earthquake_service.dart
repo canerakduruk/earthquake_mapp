@@ -1,59 +1,22 @@
 import 'package:dio/dio.dart';
-import '../../core/network/dio_client.dart';
+import 'package:earthquake_mapp/data/models/new_earthquake_model/earthquake_model.dart';
+import 'package:earthquake_mapp/data/params/earthquake_params.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../../core/constants/api_constants.dart';
-import '../../core/enums/earthquake_enums.dart';
+import '../../core/network/dio_client.dart';
 import '../../core/utils/date_helper.dart';
-import '../models/earthquake_model/earthquake_model.dart';
 
-class EarthquakeFilterParams {
-  final DateTime startDate;
-  final DateTime endDate;
-  final double? minLat;
-  final double? maxLat;
-  final double? minLon;
-  final double? maxLon;
-  final double? centerLat;
-  final double? centerLon;
-  final double? maxRadius;
-  final double? minRadius;
-  final double? minMagnitude;
-  final double? maxMagnitude;
-  final MagnitudeType? magnitudeType;
-  final int? minDepth;
-  final int? maxDepth;
-  final int? limit;
-  final int? offset;
-  final OrderBy orderBy;
-  final int? eventId;
-
-  EarthquakeFilterParams({
-    required this.startDate,
-    required this.endDate,
-    this.minLat,
-    this.maxLat,
-    this.minLon,
-    this.maxLon,
-    this.centerLat,
-    this.centerLon,
-    this.maxRadius,
-    this.minRadius,
-    this.minMagnitude,
-    this.maxMagnitude,
-    this.magnitudeType,
-    this.minDepth,
-    this.maxDepth,
-    this.limit,
-    this.offset,
-    required this.orderBy,
-    this.eventId,
-  });
-}
+final earthquakeServiceProvider = Provider<EarthquakeService>((ref) {
+  ref.watch(dioClientProvider);
+  return EarthquakeService();
+});
 
 class EarthquakeService {
   final Dio _dio = DioClient().dio;
 
   Future<List<EarthquakeModel>> getEarthquakes([
-    EarthquakeFilterParams? params,
+    EarthquakeParams? params,
   ]) async {
     try {
       final queryParams = _buildQueryParams(params);
@@ -61,17 +24,9 @@ class EarthquakeService {
         ApiConstants.earthquakeFilter,
         queryParameters: queryParams,
       );
-
       if (response.statusCode == 200) {
-        if (response.data is List) {
-          final List<dynamic> data = response.data;
-          return data.map((json) => EarthquakeModel.fromJson(json)).toList();
-        } else if (response.data is Map) {
-          final earthquakeResponse = EarthquakeResponse.fromJson(response.data);
-          return earthquakeResponse.earthquakes;
-        } else {
-          throw Exception('Unexpected response format');
-        }
+        final List<dynamic> data = response.data;
+        return data.map((json) => EarthquakeModel.fromJson(json)).toList();
       } else {
         throw Exception('Failed to load earthquakes: ${response.statusCode}');
       }
@@ -104,26 +59,13 @@ class EarthquakeService {
     }
   }
 
-  Map<String, dynamic> _buildQueryParams(EarthquakeFilterParams? params) {
+  Map<String, dynamic> _buildQueryParams(EarthquakeParams? params) {
     final Map<String, dynamic> queryParams = {};
 
     if (params != null) {
-      // Zaman parametreleri (zorunlu)
-      if (params.startDate != null) {
-        queryParams['start'] = DateHelper.formatDateForApi(params.startDate!);
-      } else {
-        queryParams['start'] = DateHelper.formatDateForApi(
-          DateHelper.getDefaultStartDate(),
-        );
-      }
+      queryParams['start'] = DateHelper.formatDateForApi(params.startDate);
 
-      if (params.endDate != null) {
-        queryParams['end'] = DateHelper.formatDateForApi(params.endDate!);
-      } else {
-        queryParams['end'] = DateHelper.formatDateForApi(
-          DateHelper.getDefaultEndDate(),
-        );
-      }
+      queryParams['end'] = DateHelper.formatDateForApi(params.endDate);
 
       // Coğrafik sınırlamalar - Dikdörtgen
       if (params.minLat != null) queryParams['minlat'] = params.minLat;
@@ -155,9 +97,7 @@ class EarthquakeService {
       // Diğer parametreler
       if (params.limit != null) queryParams['limit'] = params.limit;
       if (params.offset != null) queryParams['offset'] = params.offset;
-      if (params.orderBy != null) {
-        queryParams['orderby'] = params.orderBy!.value;
-      }
+      queryParams['orderby'] = params.orderBy.value;
       if (params.eventId != null) queryParams['eventid'] = params.eventId;
     } else {
       // Varsayılan parametreler

@@ -1,7 +1,10 @@
 import 'package:earthquake_mapp/core/routes/app_router.dart';
+import 'package:earthquake_mapp/core/theme/dark_theme.dart';
+import 'package:earthquake_mapp/core/theme/light_theme.dart';
 import 'package:earthquake_mapp/core/utils/logger_helper.dart';
-import 'package:earthquake_mapp/presentation/providers/locale_provider.dart';
-import 'package:earthquake_mapp/presentation/providers/theme_provider.dart';
+import 'package:earthquake_mapp/features/providers/locale_provider.dart';
+import 'package:earthquake_mapp/features/providers/theme_provider.dart';
+import 'package:earthquake_mapp/firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -12,7 +15,7 @@ void main() async {
   await EasyLocalization.ensureInitialized();
 
   try {
-    await Firebase.initializeApp();
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
     LoggerHelper.info("Main:", "Firebase başlatıldı.");
   } catch (error) {
     LoggerHelper.err("Main:", "Firebase Error -> $error");
@@ -45,8 +48,8 @@ class MainApp extends ConsumerWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Earthquake App',
-      theme: ThemeData.light(),
-      darkTheme: ThemeData.dark(),
+      theme: LightTheme.themeData,
+      darkTheme: DarkTheme.themeData,
       themeMode: themeMode,
       locale: locale,
       supportedLocales: context.supportedLocales,

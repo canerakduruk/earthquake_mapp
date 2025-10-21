@@ -1,13 +1,13 @@
-import 'package:earthquake_mapp/presentation/screens/bottombar_nav_screen.dart';
-import 'package:earthquake_mapp/presentation/screens/earthquake_list/earthquake_list_screen.dart';
-import 'package:earthquake_mapp/presentation/screens/earthquake_map/earthquake_map_screen.dart';
-import 'package:earthquake_mapp/presentation/screens/auth/login_form.dart';
-import 'package:earthquake_mapp/presentation/screens/auth/register_form.dart';
-import 'package:earthquake_mapp/presentation/screens/home/earthquake_assembly_screen.dart';
-import 'package:earthquake_mapp/presentation/screens/home/home_screen.dart';
-import 'package:earthquake_mapp/presentation/screens/home/profile/edit_profile/edit_profile_screen.dart';
-import 'package:earthquake_mapp/presentation/screens/home/profile/profile_screen.dart';
-import 'package:earthquake_mapp/presentation/screens/home/settings/settings_screen.dart';
+import 'package:earthquake_mapp/features/screens/auth/login_form.dart';
+import 'package:earthquake_mapp/features/screens/auth/register_form.dart';
+import 'package:earthquake_mapp/features/screens/bottombar_nav_screen.dart';
+import 'package:earthquake_mapp/features/screens/earthquake_list_screen.dart';
+import 'package:earthquake_mapp/features/screens/earthquake_map_screen.dart';
+import 'package:earthquake_mapp/features/screens/home/earthquake_assembly_screen.dart';
+import 'package:earthquake_mapp/features/screens/home/home_screen.dart';
+import 'package:earthquake_mapp/features/screens/home/profile/edit_profile/edit_profile_screen.dart';
+import 'package:earthquake_mapp/features/screens/home/profile/profile_screen.dart';
+import 'package:earthquake_mapp/features/screens/home/settings/settings_screen.dart';
 import 'package:flutter/material.dart';
 
 import 'app_routes.dart';
@@ -38,12 +38,10 @@ class AppRouter {
       case AppRoutes.bottomBarNav:
         return MaterialPageRoute(builder: (_) => const BottombarNavScreen());
 
-      // Eğer gelen settings.name == '/' gibi bir şeyse onu da ana sayfaya yönlendir:
       case AppRoutes.defaultScreen:
         return MaterialPageRoute(builder: (_) => const BottombarNavScreen());
 
       default:
-        // Bilinmeyen route gelirse anasayfaya yönlendir (uygulamayı kapatma!)
         return MaterialPageRoute(builder: (_) => const EarthquakeListScreen());
     }
   }

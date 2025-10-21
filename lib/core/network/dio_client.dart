@@ -1,10 +1,20 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../constants/api_constants.dart';
+
+final dioClientProvider = Provider<DioClient>((ref) {
+  final dioClient = DioClient();
+  dioClient.init();
+  return dioClient;
+});
 
 class DioClient {
   static final DioClient _instance = DioClient._internal();
+
   factory DioClient() => _instance;
+
   DioClient._internal();
 
   late final Dio _dio;

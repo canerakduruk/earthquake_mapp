@@ -20,6 +20,7 @@
         "login_success": "Başarıyla giriş yapıldı"
     },
     "register": {
+        "title": "Kayıt Ol",
         "step1_title": "Kayıt Ol - Adım 1",
         "step2_title": "Kayıt Ol - Adım 2",
         "email_label": "E-posta",

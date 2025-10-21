@@ -1,49 +1,26 @@
-import '../../domain/entities/earthquake_entity.dart';
-import '../../domain/repositories/earthquake_repository_interface.dart';
+import 'package:earthquake_mapp/data/models/new_earthquake_model/earthquake_model.dart';
+import 'package:earthquake_mapp/data/params/earthquake_params.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
 import '../services/earthquake_service.dart';
 
-class EarthquakeRepository implements EarthquakeRepositoryInterface {
+final earthquakeRepositoryProvider = Provider<EarthquakeRepository>((ref) {
+  final earthquakeService = ref.watch(earthquakeServiceProvider);
+  return EarthquakeRepository(earthquakeService);
+});
+
+class EarthquakeRepository {
   final EarthquakeService _earthquakeService;
 
   EarthquakeRepository(this._earthquakeService);
 
-  @override
-  Future<List<EarthquakeEntity>> getEarthquakes([
-    EarthquakeFilterParams? params,
+  Future<List<EarthquakeModel>> getEarthquakes([
+    EarthquakeParams? params,
   ]) async {
-    final earthquakes = await _earthquakeService.getEarthquakes(params);
-    return earthquakes
-        .map(
-          (earthquake) => EarthquakeEntity(
-            eventId: earthquake.eventId,
-            magnitude: earthquake.magnitude,
-            magnitudeType: earthquake.magnitudeType,
-            dateTime: earthquake.dateTime,
-            latitude: earthquake.latitude,
-            longitude: earthquake.longitude,
-            depth: earthquake.depth,
-            location: earthquake.location,
-            province: earthquake.province,
-            district: earthquake.district,
-          ),
-        )
-        .toList();
+    return await _earthquakeService.getEarthquakes(params);
   }
 
-  @override
-  Future<EarthquakeEntity> getEarthquakeById(int eventId) async {
-    final earthquake = await _earthquakeService.getEarthquakeById(eventId);
-    return EarthquakeEntity(
-      eventId: earthquake.eventId,
-      magnitude: earthquake.magnitude,
-      magnitudeType: earthquake.magnitudeType,
-      dateTime: earthquake.dateTime,
-      latitude: earthquake.latitude,
-      longitude: earthquake.longitude,
-      depth: earthquake.depth,
-      location: earthquake.location,
-      province: earthquake.province,
-      district: earthquake.district,
-    );
+  Future<EarthquakeModel> getEarthquakeById(int eventId) async {
+    return await _earthquakeService.getEarthquakeById(eventId);
   }
 }

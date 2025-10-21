@@ -20,6 +20,7 @@
         "login_success": "Successfully logged in"
     },
     "register": {
+        "title": "Register",
         "step1_title": "Register - Step 1",
         "step2_title": "Register - Step 2",
         "email_label": "Email",
